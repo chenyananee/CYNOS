@@ -17,9 +17,9 @@ Copyright 2020 chenyanan
 #include "cynos_fifo.h"
 
 /*fifoµ×²ã²Ù×÷*/
-CYNOS_STATUS pop(unsigned char *fifo,unsigned char *data,fifo_arg *arg,unsigned short size)
+CYNOS_STATUS pop(CynOS_U8 *fifo,CynOS_U8 *data,fifo_arg *arg,CynOS_U16 size)
 {	
-	unsigned short index=0;
+	CynOS_U16 index=0;
 	if(arg->fifo_r != arg->fifo_w)
 	{
 		index = arg->fifo_r;
@@ -34,9 +34,9 @@ CYNOS_STATUS pop(unsigned char *fifo,unsigned char *data,fifo_arg *arg,unsigned 
 	return CYNOS_ERR;
 }
 
-CYNOS_STATUS push(unsigned char *fifo,unsigned char data,fifo_arg *arg,unsigned short size)
+CYNOS_STATUS push(CynOS_U8 *fifo,CynOS_U8 data,fifo_arg *arg,CynOS_U16 size)
 {	
-	unsigned short index=0;
+	CynOS_U16 index=0;
 	index = arg->fifo_w+1;
 	if(index>=size)
 	{
@@ -54,27 +54,27 @@ CYNOS_STATUS push(unsigned char *fifo,unsigned char data,fifo_arg *arg,unsigned 
 	}
 }
 
-CYNOS_STATUS fifo_push(CynOS_FIFO * fifo,unsigned char * data)
+CYNOS_STATUS fifo_push(CynOS_FIFO * fifo,CynOS_U8 * data)
 {	
 	return push(fifo->fifo,*data,&fifo->fifo_sta,CYNOS_FIFO_SIZE);
 }
 
-CYNOS_STATUS fifo_pop(CynOS_FIFO * fifo,unsigned char * data)
+CYNOS_STATUS fifo_pop(CynOS_FIFO * fifo,CynOS_U8 * data)
 {	
 	return pop(fifo->fifo,data,&fifo->fifo_sta,CYNOS_FIFO_SIZE);
 }
-
-CYNOS_STATUS fifo_push_ex(CynOS_FIFO * fifo,unsigned char * data)
+#if USE_CYNOS_FIFO_EX	
+CYNOS_STATUS fifo_push_ex(CynOS_FIFO * fifo,CynOS_U8 * data)
 {	
 	return push(fifo->fifo_ex,*data,&fifo->fifo_ex_sta,CYNOS_FIFO_SIZE_EX);
 }
 
-CYNOS_STATUS fifo_pop_ex(CynOS_FIFO * fifo,unsigned char * data)
+CYNOS_STATUS fifo_pop_ex(CynOS_FIFO * fifo,CynOS_U8 * data)
 {	
 	return pop(fifo->fifo_ex,data,&fifo->fifo_ex_sta,CYNOS_FIFO_SIZE_EX);
 }
-
-CYNOS_STATUS fifo_get(CynOS_FIFO * fifo,unsigned char * data)
+#endif
+CYNOS_STATUS fifo_get(CynOS_FIFO * fifo,CynOS_U8 * data)
 {	
 	#if USE_CYNOS_FIFO_EX	
 	if(fifo->fifo_ex_sta.fifo_w!=fifo->fifo_ex_sta.fifo_r)
@@ -95,12 +95,12 @@ void CynOS_FIFO_Init(CynOS_FIFO * fifo)
 	memset(&fifo->fifo,0,CYNOS_FIFO_SIZE);
 #if USE_CYNOS_FIFO_EX
 	memset(&fifo->fifo_ex_sta,0,sizeof(fifo_arg));	
-	memset(&fifo->fifo_ex,0,CYNOS_FIFO_SIZE_EX);	
+	memset(&fifo->fifo_ex,0,CYNOS_FIFO_SIZE_EX);
+	fifo->pop_ex=fifo_pop_ex;	
+	fifo->push_ex=fifo_push_ex;
 #endif
 	fifo->pop=fifo_pop;
-	fifo->pop_ex=fifo_pop_ex;
 	fifo->push=fifo_push;
-	fifo->push_ex=fifo_push_ex;
 	fifo->get=fifo_get;
 }
 
@@ -110,8 +110,8 @@ void CynOS_FIFO_Init(CynOS_FIFO * fifo)
 CynOS_FIFO testfifo;
 void fifo_test(void)
 {
-	unsigned char t[10]={1,2,3,4,5,6,7,8,9};
-	unsigned char e[10]={0};
+	CynOS_U8 t[10]={1,2,3,4,5,6,7,8,9};
+	CynOS_U8 e[10]={0};
 	
 	CynOS_FIFO_Init(&testfifo);
 	

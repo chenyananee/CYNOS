@@ -5,6 +5,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 #include "cynos_cfg.h"
 #ifndef USE_CYNOS_MUTEX
 #define CYNOS_MUTEX_EN  0

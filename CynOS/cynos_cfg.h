@@ -7,8 +7,7 @@ extern "C" {
 #endif
 
 //debug 
-#include "peri_api.h"
-#include "plc_api.h"
+
 
 
 #ifndef USE_CYNOS
@@ -17,7 +16,7 @@ extern "C" {
 
 
 
-
+#define CPU_LEN             (16) //CPU位宽长度
 #define USER_TASK_MAX        10 //最大用户任务数目
 #define SYSTICK_FRQ          1  //ms（系统时钟周期ms）
 #define OS_ASSERT_EN         1  //异常处理
@@ -30,13 +29,13 @@ extern "C" {
 
 /*==========================系统组件裁剪=============================*/
 /*调试配置*/
-#define DEBUG_KERNEL_EN      1
-#define DEBUG_KERNEL_PRINTF(fmt, ...)   do{spl_shell_prt(SPL_PRT_MUST,fmt, ##__VA_ARGS__);}while(0);
+#define DEBUG_KERNEL_EN      0
+#define DEBUG_KERNEL_PRINTF printf
 
 #define USE_CYNOS_MUTEX      1
 #define USE_CYNOS_SEM        1
-#define USE_CYNOS_FIFO       1
-#define USE_CYNOS_FIFO_EX    1  //可抢占队列（需使能队列）
+#define USE_CYNOS_FIFO       0
+#define USE_CYNOS_FIFO_EX    0  //可抢占队列（需使能队列）
 /*调试配置*/
 /*FIFO CFG*/
 #if USE_CYNOS_FIFO
@@ -44,6 +43,8 @@ extern "C" {
 #if USE_CYNOS_FIFO_EX
 #define CYNOS_FIFO_SIZE_EX   5  //抢占队列大小（byte）
 #endif
+#else
+#define CYNOS_FIFO_SIZE      0 
 #endif
 /*MUTEX CFG*/
 #if USE_CYNOS_MUTEX
@@ -61,7 +62,7 @@ extern "C" {
 
 
 #if OS_ASSERT_EN 
-#define OS_ASSERT_HardFault  1  
+#define OS_ASSERT_HardFault  0  
 #define OS_Warning_Assert    1  
 #endif
 

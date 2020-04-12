@@ -21,11 +21,11 @@ time_hook_fun gtime_hook[TIME_HOOK_MAX];
 
 
 
-char cynos_tim_base_login(void(*time_hook)(unsigned int time))
+char cynos_tim_base_login(void(*time_hook)(CynOS_U32 time))
 {
 	static char cynos_tim_base_init = 0;
 	
-	unsigned char index=0;
+	CynOS_U8 index=0;
 	if(cynos_tim_base_init)
 	{
 		for(index=0;index<TIME_HOOK_MAX;index++)
@@ -49,10 +49,10 @@ char cynos_tim_base_login(void(*time_hook)(unsigned int time))
 	
 }
 
-char cynos_tim_base_logout(void(*time_hook)(unsigned int time))
+char cynos_tim_base_logout(void(*time_hook)(CynOS_U32 time))
 {
 	
-	unsigned char index=0;
+	CynOS_U8 index=0;
 	
 	for(index=0;index<TIME_HOOK_MAX;index++)
 	{
@@ -67,9 +67,9 @@ char cynos_tim_base_logout(void(*time_hook)(unsigned int time))
 }
 
 /*该函数必须被调用（为内核及所有任务提供时间片段）*/
-void cynos_time_run(unsigned int timebase)
+void cynos_time_run(CynOS_U32 timebase)
 {
-	unsigned char index=0;
+	CynOS_U8 index=0;
 	
 	if(gcynos_sta.init_sta==0x55)
 	{

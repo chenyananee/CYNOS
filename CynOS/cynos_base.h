@@ -12,6 +12,7 @@ extern "C" {
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
+#include "cynos_type.h"
 
 typedef enum
 {

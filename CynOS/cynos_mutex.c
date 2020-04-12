@@ -17,7 +17,7 @@ Copyright 2020 chenyanan
 #include "cynos_mutex.h"
 
 
-CYNOS_STATUS CynOs_Mutex_Lock(struct cynos_mutex * mutex,unsigned int process_id)
+CYNOS_STATUS CynOs_Mutex_Lock(struct cynos_mutex * mutex,CynOS_U32 process_id)
 {
 	if(mutex->mutex_val==CynOS_Mutex_LOCK)
 	{
@@ -38,14 +38,14 @@ CYNOS_STATUS CynOs_Mutex_Lock(struct cynos_mutex * mutex,unsigned int process_id
 	}
 }
 
-CYNOS_STATUS CynOs_Mutex_UNLock(struct cynos_mutex * mutex,unsigned int process_id)
+CYNOS_STATUS CynOs_Mutex_UNLock(struct cynos_mutex * mutex,CynOS_U32 process_id)
 {
 	if(mutex->mutex_val==CynOS_Mutex_LOCK)
 	{
 		if(mutex->process_id==process_id)
 		{
 			mutex->mutex_val=CynOS_Mutex_UNLOCK;
-			mutex->process_id=0xffffffff;
+			mutex->process_id=CynOS_U32_MAX;
 			return CYNOS_OK;
 		}
 		else
@@ -56,13 +56,13 @@ CYNOS_STATUS CynOs_Mutex_UNLock(struct cynos_mutex * mutex,unsigned int process_
 	else
 	{
 		mutex->mutex_val=CynOS_Mutex_UNLOCK;
-		mutex->process_id=0xffffffff;
+		mutex->process_id=CynOS_U32_MAX;
 		return CYNOS_OK;
 	}
 	
 }
 
-CYNOS_STATUS CynOs_Mutex_Get(struct cynos_mutex * mutex,unsigned int process_id)
+CYNOS_STATUS CynOs_Mutex_Get(struct cynos_mutex * mutex,CynOS_U32 process_id)
 {
 	if(mutex->mutex_val==CynOS_Mutex_LOCK)
 	{
@@ -95,7 +95,7 @@ CYNOS_STATUS CynOs_Mutex_Init(CynOS_Mutex * mutex)
 		mutex->unlock=CynOs_Mutex_UNLock;
 		mutex->get=CynOs_Mutex_Get;
 		mutex->mutex_val=CynOS_Mutex_UNLOCK;
-		mutex->process_id=0xffffffff;
+		mutex->process_id=CynOS_U32_MAX;
 		return CYNOS_OK;
 	}	
 	return CYNOS_ERR;

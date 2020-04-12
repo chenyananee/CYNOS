@@ -58,7 +58,7 @@ CYNOS_STATUS CynOs_Sem_Clear(struct cynos_sem * sem)
 	return CYNOS_ERR;
 }
 
-CYNOS_STATUS CynOs_Sem_Init(CynOS_Sem * sem,unsigned int sem_type)
+CYNOS_STATUS CynOs_Sem_Init(CynOS_Sem * sem,CynOS_U32 sem_type)
 {
 	if(sem)
 	{

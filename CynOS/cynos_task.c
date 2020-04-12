@@ -16,15 +16,14 @@ Copyright 2020 chenyanan
 #include "cynos_cfg.h"
 #include "cynos_kernel.h"
 #include "cynos_task.h"
-#include "user_task.h"
-#include "test.h"
+
 
 /*状态机跳转
 arg 1: 任务状态句柄
 arg 2: 即将跳转的流程
 arg 3: 跳转等待时间
 */
-void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,unsigned int wait_time)
+void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,CynOS_U32 wait_time)
 {
 	if(cynostask_sta->_init_flag)
 	{
@@ -38,11 +37,12 @@ void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,unsi
 		{
 			cynostask_sta->_task_flow=CynOSTask_FLOW_DELAY;
 		}
+		
 		cynostask_sta->_wait_time=wait_time;
 		cynostask_sta->_time_cnt=0;
 	}
 }
-unsigned char Cynos_GetTask_Step(CynOSTask_Sta * cynostask_sta)
+CynOS_U8 Cynos_GetTask_Step(CynOSTask_Sta * cynostask_sta)
 {
 	if(cynostask_sta->_init_flag)
 	{
@@ -78,7 +78,7 @@ void Cynos_TASK_Delay(CynOSTask_Sta * cynostask_sta)
 	任务时间片
 	需加入到每个任务注册的tick钩函数中
 */
-void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,unsigned int time)
+void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time)
 {
 	if(cynostask_sta->_init_flag)
 	{
@@ -104,7 +104,7 @@ CynOSTask_Sta CynOSTask_Sys_Sta={0};
 /*
 	任务内时间片钩函数（非内核任务时间片）
 */
-void Cynos_TASK_HooK(unsigned int time)
+void Cynos_TASK_HooK(CynOS_U32 time)
 {
 	Cynos_TASK_SystickHandle(&CynOSTask_Sys_Sta,time);
 }
@@ -149,8 +149,8 @@ void Cynos_UserTask_Init()
 =======================================================================================
 	                         创建用户任务
 =======================================================================================
-*/	
-	UserTask_Create();
+*/
+	
 }
 	
 
