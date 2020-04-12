@@ -16,7 +16,7 @@ Copyright 2020 chenyanan
 #include "cynos_cfg.h"
 #include "cynos_kernel.h"
 #include "cynos_task.h"
-
+#include "app.h"
 
 /*状态机跳转
 arg 1: 任务状态句柄
@@ -86,56 +86,6 @@ void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time)
 	}
 }
 
-
-
-
-
-/*
-============================任务状态机示例==============================
-*/
-
-
-/*
-	状态机运行状态句柄
-*/
-CynOSTask_Sta CynOSTask_Sys_Sta={0};
-
-
-/*
-	任务内时间片钩函数（非内核任务时间片）
-*/
-void Cynos_TASK_HooK(CynOS_U32 time)
-{
-	Cynos_TASK_SystickHandle(&CynOSTask_Sys_Sta,time);
-}
-
-void Cynos_TASKInit(void)
-{
-	Cynos_Task_Init(&CynOSTask_Sys_Sta);
-}
-/*
-	任务
-*/
-void Cynos_TASK_Sys(void * arg)
-{
-	switch(CynOSTask_Sys_Sta._task_flow)
-	{
-		case CynOSTask_FLOW_IDLE:
-			Cynos_TASK_Jump(&CynOSTask_Sys_Sta,CynOSTask_FLOW_STEP_1,1000);
-			break;
-		case CynOSTask_FLOW_STEP_1:
-			Cynos_TASK_Jump(&CynOSTask_Sys_Sta,CynOSTask_FLOW_IDLE,1000);
-			break;
-		case CynOSTask_FLOW_DELAY:
-			Cynos_TASK_Delay(&CynOSTask_Sys_Sta);
-			break;
-		default:
-			Cynos_TASK_Jump(&CynOSTask_Sys_Sta,CynOSTask_FLOW_IDLE,0);
-			break;
-	}
-}
-
-
 /**************************************************************************************
 *
 *						    初始化用户任务
@@ -144,19 +94,12 @@ void Cynos_TASK_Sys(void * arg)
 **************************************************************************************/
 void Cynos_UserTask_Init()
 {
-	CynosTask_Creat(Cynos_TASK_HooK,Cynos_TASKInit,Cynos_TASK_Sys,1000);
-/*
-=======================================================================================
-	                         创建用户任务
-=======================================================================================
-*/
-	
+	CynosTask_Creat(lcd_systick,lcdInit,lcdTASK,10);
+	CynosTask_Creat(sample_systick,sampleInit,sampleTASK,10);
+	CynosTask_Creat(comm_systick,commInit,commTASK,10);
+	CynosTask_Creat(lpw_systick,lpwInit,lpwTASK,10);
 }
 	
-
-
-
-
 
 
 

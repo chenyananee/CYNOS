@@ -40,11 +40,16 @@ typedef struct
 	CynOS_U8 task_priority; //优先级未使用（防止优先调度使得低优先任务长时间无法执行）
 	CynOS_U8 task_event;
 	CynOS_TASK_STA task_sta;
-	
+#if TASK_TIME_HOOK_EN
 	void(*task_event_time_hook)(void);
-	void(*task_event_pend_hook)(void);
-	void(*task_event_resume_hook)(void);
-	
+#endif
+#if TASK_PEND_HOOK_EN
+    void(*task_event_pend_hook)(void);
+#endif
+#if TASK_RESUM_HOOK_EN
+    void(*task_event_resume_hook)(void);
+#endif
+
 }userTaskRun;
 
 

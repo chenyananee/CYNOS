@@ -141,13 +141,20 @@ void CynOS_Login_Hook(CynOS_U8 taskid,CynOS_TASK_STA task_type,void(*eventhook)(
 		switch(task_type)
 		{
 			case CynOS_TASK_EVENT_TIME:
-				gUserTask[taskid].task_event_time_hook=eventhook;
+#if TASK_TIME_HOOK_EN
+			    gUserTask[taskid].task_event_time_hook=eventhook;
+#endif
 				break;
 			case CynOS_TASK_EVENT_PEND:
-				gUserTask[taskid].task_event_pend_hook=eventhook;
+#if TASK_PEND_HOOK_EN
+                gUserTask[taskid].task_event_pend_hook=eventhook;
+#endif
 				break;
 			case CynOS_TASK_EVENT_RESUM:
-				gUserTask[taskid].task_event_resume_hook=eventhook;
+#if TASK_TIME_HOOK_EN
+                gUserTask[taskid].task_event_resume_hook=eventhook;
+#endif
+
 				break;
 			default:
 				break;
@@ -242,7 +249,7 @@ void CynOsStart(void)
 					#endif
 					gUserTask[iii].task_event&=(~CynOS_TASK_EVENT_PEND);
 					gUserTask[iii].task_sta=CynOS_TASK_EVENT_PEND;
-					if(TASK_PEND_HOOK_EN)
+#if TASK_PEND_HOOK_EN
 					{
 						#if DEBUG_KERNEL_EN
 						DEBUG_KERNEL_PRINTF("task[%02d] event_pend_hook\r\n",gUserTask[iii].task_id);
@@ -252,6 +259,7 @@ void CynOsStart(void)
 							gUserTask[iii].task_event_pend_hook();
 						}
 					}
+#endif
 				}
 				else if(gUserTask[iii].task_event&CynOS_TASK_EVENT_RESUM)
 				{
@@ -260,7 +268,7 @@ void CynOsStart(void)
 					#endif
 					gUserTask[iii].task_event&=(~CynOS_TASK_EVENT_RESUM);
 					gUserTask[iii].task_sta=CynOS_TASK_EVENT_RUN;
-					if(TASK_RESUM_HOOK_EN)
+#if TASK_RESUM_HOOK_EN
 					{
 						#if DEBUG_KERNEL_EN
 						DEBUG_KERNEL_PRINTF("task[%02d] event_resume_hook\r\n",gUserTask[iii].task_id);
@@ -270,6 +278,7 @@ void CynOsStart(void)
 							gUserTask[iii].task_event_resume_hook();
 						}
 					}
+#endif
 				}
 				
 				if(gUserTask[iii].task_sta==CynOS_TASK_EVENT_RUN)
