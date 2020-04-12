@@ -20,25 +20,7 @@ Copyright 2020 chenyanan
 
 cynos_status gcynos_sta;
 userTaskRun gUserTask[USER_TASK_MAX];
-/*
-	内核禁止调用除time以外的模块，保证只调用内核以及time文件可独立运行，
-	以方便裁剪系统实现系统的精简，占用极少的资源方便在小资源机器运行，
-	且在占用极少资源的情况下加载相应其他功能组件后能够实现相对复杂的功能。
-	
-	当前每个任务RAM约占用约 44Byte  {kernel:40(调度参数表) timer:4(软件定时器表)}
-*/
 
-
-
-
-/*
-	参数1：该任务周期性时间片中断钩函数
-	参数2：该任务初始化函数
-	参数3：该任务主体（不允许阻塞）
-	参数4：时间片
-	
-	任务创建完成默认为运行态
-*/
 CynOS_U8 CynosTask_Creat(void(*time_hook)(CynOS_U32 time),void(*taskInit)(void),void(*task)(void * arg),CynOS_U32 tasktick)
 {
 	CynOS_U8 index=0;
@@ -82,7 +64,6 @@ CynOS_U8 CynosTask_Delete(CynOS_U8 task_id)
 	return CYNOS_ERR;
 }
 
-//内核调度tick
 void CynOs_Systick(CynOS_U32 cnt)
 {
     CynOS_U8 iii=0;
@@ -100,9 +81,7 @@ int compar(const void *p1, const void *p2)
 {
 	return ((*(CynOS_U8*)p1)-(*(CynOS_U8*)p2));
 }
-/*
-	快排实现优先调度机制（优先级越高值越小）
-*/
+
 void CynOsTaskSchedule(CynOS_U8*taskfifo,CynOS_U32 size,CynOS_U8 typesize)
 {
 	qsort(taskfifo,size,typesize,compar);
@@ -133,7 +112,6 @@ void CynOS_RESUM(CynOS_U8 taskid)
 }
 
 
-/*内核回调注册*/
 void CynOS_Login_Hook(CynOS_U8 taskid,CynOS_TASK_STA task_type,void(*eventhook)(void))
 {
 	if(taskid<USER_TASK_MAX)
@@ -195,10 +173,7 @@ CynOS_U8 CynOS_Get_KernelBuildTime(void * out)
 	return strlen(CYNOS_KERNEL_BUILD_TIME);
 }
 
-/*
-	0为系统级的异常
-	！0为一般可忽略异常
-*/	
+	
 void CynOS_Assert(char asslv,char*head,void *arg)
 {
 	#if DEBUG_KERNEL_EN
@@ -306,10 +281,6 @@ void CynOsStart(void)
 	}
 }
 
-
-/*
-	系统级异常处理
-*/
 
 #if OS_ASSERT_HardFault
 void HardFault_Handler()

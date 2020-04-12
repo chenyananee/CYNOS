@@ -11,37 +11,36 @@ extern "C" {
 
 
 #ifndef USE_CYNOS
-#define USE_CYNOS (1) //多系统共生选择
+#define USE_CYNOS (1) 
 #endif
 
 
 
-#define CPU_LEN             (16) //CPU位宽长度
-#define USER_TASK_MAX        5 //最大用户任务数目
-#define SYSTICK_FRQ          10  //ms（系统时钟周期ms）
-#define OS_ASSERT_EN         0  //异常处理
 
-#define TASK_SYSTICK_EN      0  //系统时间片调度
-#define TASK_TIME_HOOK_EN    0  //时间片钩函数
-#define TASK_PEND_HOOK_EN    0  //任务挂起钩函数
-#define TASK_RESUM_HOOK_EN   0  //任务恢复钩函数
+#define CPU_LEN             (16) 
+#define USER_TASK_MAX        5   
+#define SYSTICK_FRQ          10  
+#define OS_ASSERT_EN         0   
+
+#define TASK_SYSTICK_EN      0   
+#define TASK_TIME_HOOK_EN    0   
+#define TASK_PEND_HOOK_EN    0   
+#define TASK_RESUM_HOOK_EN   0   
 
 
-/*==========================系统组件裁剪=============================*/
-/*调试配置*/
+/*=======================================================*/
 #define DEBUG_KERNEL_EN      0
 #define DEBUG_KERNEL_PRINTF printf
 
-#define USE_CYNOS_MUTEX      1
-#define USE_CYNOS_SEM        0
+#define USE_CYNOS_MUTEX      0
+#define USE_CYNOS_SEM        1
 #define USE_CYNOS_FIFO       0
-#define USE_CYNOS_FIFO_EX    0  //可抢占队列（需使能队列）
-/*调试配置*/
+#define USE_CYNOS_FIFO_EX    0  
 /*FIFO CFG*/
 #if USE_CYNOS_FIFO
-#define CYNOS_FIFO_SIZE      10 //队列大小（byte）
+#define CYNOS_FIFO_SIZE      10 
 #if USE_CYNOS_FIFO_EX
-#define CYNOS_FIFO_SIZE_EX   5  //抢占队列大小（byte）
+#define CYNOS_FIFO_SIZE_EX   5  
 #endif
 #else
 #define CYNOS_FIFO_SIZE      0 

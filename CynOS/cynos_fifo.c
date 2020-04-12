@@ -104,32 +104,6 @@ void CynOS_FIFO_Init(CynOS_FIFO * fifo)
 	fifo->get=fifo_get;
 }
 
-/*
-//สนำรสตภý
-
-CynOS_FIFO testfifo;
-void fifo_test(void)
-{
-	CynOS_U8 t[10]={1,2,3,4,5,6,7,8,9};
-	CynOS_U8 e[10]={0};
-	
-	CynOS_FIFO_Init(&testfifo);
-	
-	for(char iii=0 ;iii<10;iii++)
-	{
-		testfifo.push(&testfifo,&t[iii]);
-	}
-	testfifo.push_ex(&testfifo,&t[8]);
-	
-	for(char iii=0 ;iii<10;iii++)
-	{
-		testfifo.get(&testfifo,&e[iii]);
-	}
-}	
-
-*/
-
-
 
 
 

@@ -66,7 +66,7 @@ char cynos_tim_base_logout(void(*time_hook)(CynOS_U32 time))
 	return CYNOS_ERR;	
 }
 
-/*该函数必须被调用（为内核及所有任务提供时间片段）*/
+
 void cynos_time_run(CynOS_U32 timebase)
 {
 	CynOS_U8 index=0;

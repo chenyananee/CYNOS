@@ -18,17 +18,11 @@ Copyright 2020 chenyanan
 #include "cynos_task.h"
 #include "app.h"
 
-/*状态机跳转
-arg 1: 任务状态句柄
-arg 2: 即将跳转的流程
-arg 3: 跳转等待时间
-*/
 void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,CynOS_U32 wait_time)
 {
 	if(cynostask_sta->_init_flag)
 	{
 		cynostask_sta->_task_next_flow=next_step;
-		/*立即跳转*/
 		if(wait_time==0)
 		{
 			cynostask_sta->_task_flow=next_step;
@@ -57,10 +51,7 @@ void Cynos_Task_Init(CynOSTask_Sta * cynostask_sta)
 	cynostask_sta->_task_flow=CynOSTask_FLOW_IDLE;
 	cynostask_sta->_task_next_flow=CynOSTask_FLOW_IDLE;
 }
-/*
-	延时自动跳转函数
-	需加入到延时状态内实现任务自动跳转
-*/
+
 void Cynos_TASK_Delay(CynOSTask_Sta * cynostask_sta)
 {
 	if(cynostask_sta->_init_flag)
@@ -74,10 +65,7 @@ void Cynos_TASK_Delay(CynOSTask_Sta * cynostask_sta)
 	}
 }
 
-/*
-	任务时间片
-	需加入到每个任务注册的tick钩函数中
-*/
+
 void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time)
 {
 	if(cynostask_sta->_init_flag)
@@ -94,10 +82,10 @@ void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time)
 **************************************************************************************/
 void Cynos_UserTask_Init()
 {
+	CynosTask_Creat(lpw_systick,lpwInit,lpwTASK,10);
 	CynosTask_Creat(lcd_systick,lcdInit,lcdTASK,10);
 	CynosTask_Creat(sample_systick,sampleInit,sampleTASK,10);
 	CynosTask_Creat(comm_systick,commInit,commTASK,10);
-	CynosTask_Creat(lpw_systick,lpwInit,lpwTASK,10);
 }
 	
 

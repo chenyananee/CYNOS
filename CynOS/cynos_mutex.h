@@ -17,17 +17,16 @@ typedef enum
 
 typedef struct cynos_mutex
 {
-/*public方法*/	
+/*public*/	
 	CYNOS_STATUS(*lock)(struct cynos_mutex * mutex,unsigned int process_id);
 	CYNOS_STATUS(*unlock)(struct cynos_mutex * mutex,unsigned int process_id);
 	CYNOS_STATUS(*get)(struct cynos_mutex * mutex,unsigned int process_id);
-/*protect成员禁止直接访问*/
+/*protect*/
 	CynOS_Mutex_STA mutex_val;
 	unsigned int process_id;
 }CynOS_Mutex;
 
 
-/*mutex类初始化*/
 CYNOS_STATUS CynOs_Mutex_Init(CynOS_Mutex * mutex);
 
 
