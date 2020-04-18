@@ -37,7 +37,9 @@ typedef struct cynfifo_os
 	CYNOS_STATUS(*pop)(struct cynfifo_os * fifo,CynOS_U8 * data);		
 	CYNOS_STATUS(*push_ex)(struct cynfifo_os * fifo,CynOS_U8 * data);  
 	CYNOS_STATUS(*pop_ex)(struct cynfifo_os * fifo,CynOS_U8 * data);   
-	CYNOS_STATUS(*get)(struct cynfifo_os * fifo,CynOS_U8 * data);      
+	CYNOS_STATUS(*get)(struct cynfifo_os * fifo,CynOS_U8 * data);
+	CYNOS_STATUS(*at)(struct cynfifo_os * fifo,CynOS_U8 * data);
+	CYNOS_STATUS(*size)(struct cynfifo_os * fifo,CynOS_U8 * data);  	  	
 /*protect*/
 	fifo_arg fifo_sta;
 #if USE_CYNOS_FIFO_EX	

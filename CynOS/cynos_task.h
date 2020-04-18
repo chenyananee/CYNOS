@@ -31,8 +31,8 @@ typedef enum
 
 typedef struct
 {
-	unsigned int  _time_cnt;
-	unsigned int  _wait_time;
+	CynOS_U32  _time_cnt;
+	CynOS_U32  _wait_time;
 	CynOS_U8 _init_flag;
 	CynOS_U8 _task_flow;
 	CynOS_U8 _task_next_flow;
@@ -41,11 +41,11 @@ typedef struct
 
 extern void Cynos_Task_Init(CynOSTask_Sta * cynostask_sta);
 
-extern void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,unsigned int wait_time);
+extern void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,CynOS_U32 wait_time);
 
 extern void Cynos_TASK_Delay(CynOSTask_Sta * cynostask_sta);
 
-extern void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,unsigned int time);
+extern void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time);
 
 extern CynOS_U8 Cynos_GetTask_Step(CynOSTask_Sta * cynostask_sta);
 

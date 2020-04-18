@@ -16,13 +16,13 @@ extern "C" {
 
 
 
-typedef  void(*time_hook_fun)(unsigned int time);
+typedef  void(*time_hook_fun)(CynOS_U32 time);
 
 
 
-extern char cynos_tim_base_login(void(*time_hook)(unsigned int time));
-extern char cynos_tim_base_logout(void(*time_hook)(unsigned int time));
-extern void cynos_time_run(unsigned int timebase);
+extern char CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time));
+extern char CynOS_tim_base_logout(void(*time_hook)(CynOS_U32 time));
+extern void CynOS_Systick_Handle(CynOS_U32 timebase);
 
 
 

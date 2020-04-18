@@ -18,12 +18,12 @@ typedef enum
 typedef struct cynos_mutex
 {
 /*public*/	
-	CYNOS_STATUS(*lock)(struct cynos_mutex * mutex,unsigned int process_id);
-	CYNOS_STATUS(*unlock)(struct cynos_mutex * mutex,unsigned int process_id);
-	CYNOS_STATUS(*get)(struct cynos_mutex * mutex,unsigned int process_id);
+	CYNOS_STATUS(*lock)(struct cynos_mutex * mutex,CynOS_U32 process_id);
+	CYNOS_STATUS(*unlock)(struct cynos_mutex * mutex,CynOS_U32 process_id);
+	CYNOS_STATUS(*get)(struct cynos_mutex * mutex,CynOS_U32 process_id);
 /*protect*/
 	CynOS_Mutex_STA mutex_val;
-	unsigned int process_id;
+	CynOS_U32 process_id;
 }CynOS_Mutex;
 
 

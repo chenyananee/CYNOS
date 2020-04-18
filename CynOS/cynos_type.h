@@ -32,6 +32,7 @@ extern "C" {
 #define CynOS_U32_MAX (0XFFFF)
 #endif
 #if (CPU_TYPE==32)
+typedef void CynOS_VOID;
 typedef unsigned char CynOS_U8;
 typedef unsigned short CynOS_U16;
 typedef unsigned int CynOS_U32;

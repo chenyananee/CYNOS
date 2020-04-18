@@ -15,12 +15,12 @@ typedef struct cynos_sem
 	CYNOS_STATUS(*pend)(struct cynos_sem * mutex);
 	CYNOS_STATUS(*clear)(struct cynos_sem * mutex);
 /*protect*/	
-	unsigned int sem_type;
-	unsigned int sem_val;
+	CynOS_U32 sem_type;
+	CynOS_U32 sem_val;
 }CynOS_Sem;
 
 
-CYNOS_STATUS CynOs_Sem_Init(CynOS_Sem * sem,unsigned int sem_type);
+CYNOS_STATUS CynOs_Sem_Init(CynOS_Sem * sem,CynOS_U32 sem_type);
 
 
 

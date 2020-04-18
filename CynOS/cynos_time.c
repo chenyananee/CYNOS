@@ -21,7 +21,7 @@ time_hook_fun gtime_hook[TIME_HOOK_MAX];
 
 
 
-char cynos_tim_base_login(void(*time_hook)(CynOS_U32 time))
+char CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time))
 {
 	static char cynos_tim_base_init = 0;
 	
@@ -49,7 +49,7 @@ char cynos_tim_base_login(void(*time_hook)(CynOS_U32 time))
 	
 }
 
-char cynos_tim_base_logout(void(*time_hook)(CynOS_U32 time))
+char CynOS_tim_base_logout(void(*time_hook)(CynOS_U32 time))
 {
 	
 	CynOS_U8 index=0;
@@ -67,7 +67,7 @@ char cynos_tim_base_logout(void(*time_hook)(CynOS_U32 time))
 }
 
 
-void cynos_time_run(CynOS_U32 timebase)
+void CynOS_Systick_Handle(CynOS_U32 timebase)
 {
 	CynOS_U8 index=0;
 	

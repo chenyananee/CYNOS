@@ -18,8 +18,8 @@ Copyright 2020 chenyanan
 #include "cynos_kernel.h"
 #include "cynos_time.h"
 
-cynos_status gcynos_sta;
-userTaskRun gUserTask[USER_TASK_MAX];
+CynOS_Run_Status gcynos_sta;
+CynOS_UserTask_Info_Handle gUserTask[USER_TASK_MAX];
 
 CynOS_U8 CynosTask_Creat(void(*time_hook)(CynOS_U32 time),void(*taskInit)(void),void(*task)(void * arg),CynOS_U32 tasktick)
 {
@@ -38,7 +38,7 @@ CynOS_U8 CynosTask_Creat(void(*time_hook)(CynOS_U32 time),void(*taskInit)(void),
 				gUserTask[index].taskInit=taskInit;
 				gUserTask[index].time_hook=time_hook;
 				gUserTask[index].task_tick=tasktick;
-				cynos_tim_base_login(gUserTask[index].time_hook);
+				CynOS_Tim_Base_Login(gUserTask[index].time_hook);
 				return index;
 			}
 		}
@@ -50,7 +50,7 @@ CynOS_U8 CynosTask_Delete(CynOS_U8 task_id)
 {
 	if((gUserTask[task_id].task)&&(gUserTask[task_id].task_id==task_id))
 	{
-		cynos_tim_base_logout(gUserTask[task_id].time_hook);
+		CynOS_tim_base_logout(gUserTask[task_id].time_hook);
 		gUserTask[task_id].task_event=CynOS_TASK_EVENT_NULL;
 		gUserTask[task_id].task_sta=CynOS_TASK_EVENT_NULL;
 		gUserTask[task_id].task_id=0;
@@ -89,10 +89,10 @@ void CynOsTaskSchedule(CynOS_U8*taskfifo,CynOS_U32 size,CynOS_U8 typesize)
 
 void CynOS_Init(void)
 {
-	memset(gUserTask,0,sizeof(userTaskRun));
-	memset(&gcynos_sta,0,sizeof(cynos_status));
+	memset(gUserTask,0,sizeof(CynOS_UserTask_Info_Handle));
+	memset(&gcynos_sta,0,sizeof(CynOS_Run_Status));
 	gcynos_sta.init_sta=0x55;
-	cynos_tim_base_login(CynOs_Systick); //×¢²áÄÚºËtick
+	CynOS_Tim_Base_Login(CynOs_Systick); 
 }
 
 void CynOS_PENDING(CynOS_U8 taskid)
@@ -173,11 +173,37 @@ CynOS_U8 CynOS_Get_KernelBuildTime(void * out)
 	return strlen(CYNOS_KERNEL_BUILD_TIME);
 }
 
-	
-void CynOS_Assert(char asslv,char*head,void *arg)
+CYNOS_STATUS CynOS_Get_Task_Info(CynOS_U32 task_id,CynOS_UserTask_Info_Handle * task_info)
+{
+	CynOS_U32 index;
+	if(gcynos_sta.init_sta==0x55)
+	{
+		for(index=0;index<USER_TASK_MAX;index++)
+		{
+			if(gUserTask[index].task_id==task_id)
+			{
+				*task_info=gUserTask[index];
+				return CYNOS_OK;
+			}
+		}
+	}
+	return CYNOS_ERR;
+}
+
+CynOS_U32 CynOS_Get_Task_ID(void)
+{
+	return gcynos_sta.task_id;
+}
+
+void CynOS_Assert(char asslv,char*head,char*format,...)
 {
 	#if DEBUG_KERNEL_EN
-	DEBUG_KERNEL_PRINTF("[%s]:%s\r\n",head,(char*)arg);
+	va_list ap;
+	va_start(ap, format);
+	DEBUG_KERNEL_PRINTF("[%s]:",head);
+	DEBUG_KERNEL_PRINTF(format,ap);
+//	DEBUG_KERNEL_PRINTF(format,...);
+	va_end(ap);
 	#endif
 	if(asslv==0)
 	{
@@ -224,7 +250,7 @@ void CynOsStart(void)
 					#endif
 					gUserTask[iii].task_event&=(~CynOS_TASK_EVENT_PEND);
 					gUserTask[iii].task_sta=CynOS_TASK_EVENT_PEND;
-#if TASK_PEND_HOOK_EN
+					#if TASK_PEND_HOOK_EN
 					{
 						#if DEBUG_KERNEL_EN
 						DEBUG_KERNEL_PRINTF("task[%02d] event_pend_hook\r\n",gUserTask[iii].task_id);
@@ -234,7 +260,7 @@ void CynOsStart(void)
 							gUserTask[iii].task_event_pend_hook();
 						}
 					}
-#endif
+					#endif
 				}
 				else if(gUserTask[iii].task_event&CynOS_TASK_EVENT_RESUM)
 				{
@@ -243,7 +269,7 @@ void CynOsStart(void)
 					#endif
 					gUserTask[iii].task_event&=(~CynOS_TASK_EVENT_RESUM);
 					gUserTask[iii].task_sta=CynOS_TASK_EVENT_RUN;
-#if TASK_RESUM_HOOK_EN
+					#if TASK_RESUM_HOOK_EN
 					{
 						#if DEBUG_KERNEL_EN
 						DEBUG_KERNEL_PRINTF("task[%02d] event_resume_hook\r\n",gUserTask[iii].task_id);
@@ -253,23 +279,23 @@ void CynOsStart(void)
 							gUserTask[iii].task_event_resume_hook();
 						}
 					}
-#endif
+					#endif
 				}
 				
 				if(gUserTask[iii].task_sta==CynOS_TASK_EVENT_RUN)
 				{
+					gcynos_sta.task_id=gUserTask[iii].task_id;
 					#if TASK_SYSTICK_EN
-					
 					if(gUserTask[iii].task_tick_cnt>=gUserTask[iii].task_tick)
 					{
 						gUserTask[iii].task_tick_cnt=0;
-						if(TASK_TIME_HOOK_EN)
+						#if TASK_TIME_HOOK_EN
+						
+						if(gUserTask[iii].task_event_time_hook)
 						{
-							if(gUserTask[iii].task_event_time_hook)
-							{
-								gUserTask[iii].task_event_time_hook();
-							}
+							gUserTask[iii].task_event_time_hook();
 						}
+						#endif
 						gUserTask[iii].task(gUserTask[iii].prm);
 					}
 					#else
