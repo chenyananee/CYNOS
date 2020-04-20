@@ -27,13 +27,21 @@ extern "C" {
 #else
 #define CYNOS_SLOT_EN  USE_CYNOS_SLOT
 #endif
-
+#ifndef USE_CYNOS_DEBUG
+#define CYNOS_SLOT_EN  0
+#else
+#define CYNOS_DEBUG_EN  USE_CYNOS_DEBUG
+#endif
 
 
 #include "cynos_kernel.h"
 #include "cynos_time.h"
 #include "cynos_task.h"
 
+
+#if CYNOS_DEBUG_EN
+#include "cynos_debug.h"
+#endif
 #if CYNOS_MUTEX_EN
 #include "cynos_mutex.h"
 #endif
