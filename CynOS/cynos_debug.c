@@ -17,7 +17,7 @@ Copyright 2020 chenyanan
 
 
 #include "cynos_debug.h"
-
+#include "cynos_funlib.h"
 
 
 
@@ -29,17 +29,53 @@ Copyright 2020 chenyanan
 -----------------------------------------------------------------------*/
 void CynOS_Debug(void(write)(char*data,unsigned int len),char*head,char * format,...)
 {
-	CynOS_U8 debugbuff[1024];
+	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE+sizeof(CynOS_Debug_Handle)];
 	CynOS_U16 debuge_len;
+	CynOS_Debug_Handle *debug_handle=(CynOS_Debug_Handle *)debugbuff;
+	debug_handle->debugsize=CYNOS_DEBUG_SIZE;
 	
     va_list args;
+	CynOS_Mem_Set(debug_handle->debug_buff,0,debug_handle->debugsize,debug_handle->debugsize);
+	if(!debug_handle->debugsize)
+		return;
     va_start(args, format);
-	debuge_len+=sprintf((char*)&debugbuff[debuge_len], "[%s]:",head);
-    debuge_len += vsprintf((char*)&debugbuff[debuge_len], format, args);
+	debuge_len+=sprintf((char*)&debug_handle->debug_buff[debuge_len], "[%s]:",head);
+    debuge_len += vsprintf((char*)&debug_handle->debug_buff[debuge_len], format, args);
     va_end(args);
-	write((char*)debugbuff,debuge_len);
+	write((char*)debug_handle->debug_buff,debuge_len);
 }
-
+/*---------------------------------------------------------------------
+  Function Name: CynOS_Debug
+  Description:   
+  Inputs:        
+  Returns:       
+-----------------------------------------------------------------------*/
+void CynOS_Print_Char(void(write)(char*data,unsigned int len),char * format,...)
+{
+	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE+sizeof(CynOS_Debug_Handle)];
+	CynOS_U16 debuge_len;
+	CynOS_Debug_Handle *debug_handle=(CynOS_Debug_Handle *)debugbuff;
+	debug_handle->debugsize=CYNOS_DEBUG_SIZE;
+	
+    va_list args;
+	CynOS_Mem_Set(debug_handle->debug_buff,0,debug_handle->debugsize,debug_handle->debugsize);
+	if(!debug_handle->debugsize)
+		return;
+    va_start(args, format);
+    debuge_len += vsprintf((char*)&debug_handle->debug_buff[debuge_len], format, args);
+    va_end(args);
+	write((char*)debug_handle->debug_buff,debuge_len);
+}
+/*---------------------------------------------------------------------
+  Function Name: CynOS_Debug
+  Description:   
+  Inputs:        
+  Returns:       
+-----------------------------------------------------------------------*/
+void CynOS_Print_Hex(void(write)(char*data,unsigned int len),char * data,unsigned int len)
+{
+	write(data,len);
+}
 
 
 
