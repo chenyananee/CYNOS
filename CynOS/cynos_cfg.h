@@ -38,6 +38,13 @@ extern "C" {
 #define USE_CYNOS_SEM        1
 #define USE_CYNOS_FIFO       1
 #define USE_CYNOS_FIFO_EX    1  
+
+/*DEBUG CFG*/
+#if USE_CYNOS_DEBUG
+#define CYNOS_DEBUG_SIZE      1024 
+#else
+#define CYNOS_DEBUG_SIZE      0 
+#endif
 /*FIFO CFG*/
 #if USE_CYNOS_FIFO
 #define CYNOS_FIFO_SIZE      10 
@@ -47,6 +54,8 @@ extern "C" {
 #else
 #define CYNOS_FIFO_SIZE      0 
 #endif
+
+
 /*MUTEX CFG*/
 #if USE_CYNOS_MUTEX
 

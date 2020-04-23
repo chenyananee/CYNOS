@@ -77,14 +77,70 @@ void CynOs_Systick(CynOS_U32 cnt)
 }
 
 
-int compar(const void *p1, const void *p2)
+int compar_u8_s(const void *p1, const void *p2)
 {
 	return ((*(CynOS_U8*)p1)-(*(CynOS_U8*)p2));
 }
 
-void CynOsTaskSchedule(CynOS_U8*taskfifo,CynOS_U32 size,CynOS_U8 typesize)
+int compar_u32_s(const void *p1, const void *p2)
 {
-	qsort(taskfifo,size,typesize,compar);
+	return ((*(CynOS_U32*)p1)-(*(CynOS_U32*)p2));
+}
+int compar_u16_s(const void *p1, const void *p2)
+{
+	return ((*(CynOS_U16*)p1)-(*(CynOS_U16*)p2));
+}
+
+int compar_u8_b(const void *p1, const void *p2)
+{
+	return ((*(CynOS_U8*)p2)-(*(CynOS_U8*)p1));
+}
+
+int compar_u32_b(const void *p1, const void *p2)
+{
+	return ((*(CynOS_U32*)p2)-(*(CynOS_U32*)p1));
+}
+int compar_u16_b(const void *p1, const void *p2)
+{
+	return ((*(CynOS_U16*)p2)-(*(CynOS_U16*)p1));
+}
+
+CYNOS_STATUS CynOsTaskSchedule(CynOS_VOID*taskfifo,CynOS_U32 size,CynOS_U8 typesize,CynOS_U8 dir)
+{
+	switch(typesize)
+	{
+		case 1:
+			if(dir)
+			{
+				qsort(taskfifo,size,typesize,compar_u8_b);
+			}
+			else
+			{
+				qsort(taskfifo,size,typesize,compar_u8_s);
+			}
+			return CYNOS_OK;
+		case 2:
+			if(dir)
+			{
+				qsort(taskfifo,size,typesize,compar_u16_b);
+			}
+			else
+			{
+				qsort(taskfifo,size,typesize,compar_u16_s);
+			}
+			return CYNOS_OK;
+		case 4:
+			if(dir)
+			{
+				qsort(taskfifo,size,typesize,compar_u32_b);
+			}
+			else
+			{
+				qsort(taskfifo,size,typesize,compar_u32_s);
+			}
+			return CYNOS_OK;
+	}
+	return CYNOS_ERR;
 }
 
 void CynOS_Init(void)

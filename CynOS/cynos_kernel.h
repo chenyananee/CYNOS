@@ -86,7 +86,7 @@ extern CynOS_U32 CynOS_Get_Task_ID(void);
 
 extern CYNOS_STATUS CynOS_Get_Task_Info(CynOS_U32 task_id,CynOS_UserTask_Info_Handle * task_info);
 
-extern void CynOsTaskSchedule(CynOS_U8*taskfifo,unsigned int size,CynOS_U8 typesize);
+extern CYNOS_STATUS CynOsTaskSchedule(CynOS_VOID*taskfifo,CynOS_U32 size,CynOS_U8 typesize,CynOS_U8 dir);
 
 extern void CynOS_PENDING(CynOS_U8 taskid);
 

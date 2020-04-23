@@ -32,6 +32,12 @@ extern "C" {
 #else
 #define CYNOS_DEBUG_EN  USE_CYNOS_DEBUG
 #endif
+#ifndef USE_CYNOS_SCHEDULE
+#define CYNOS_SCHEDULE_EN  0
+#else
+#define CYNOS_SCHEDULE_EN  USE_CYNOS_SCHEDULE
+#endif
+
 
 
 #include "cynos_kernel.h"
@@ -56,6 +62,9 @@ extern "C" {
 #include "cynos_slot.h"
 #endif
 
+#if CYNOS_SCHEDULE_EN
+#include "cynos_schedule.h"
+#endif
 
 /* C++ detection */
 #ifdef __cplusplus
