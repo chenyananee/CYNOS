@@ -20,14 +20,50 @@ Copyright 2020 chenyanan
 #include "cynos_funlib.h"
 
 
+CynOS_Debug_Cfg gdebug_cfg;
 
+/*---------------------------------------------------------------------
+  Function Name: CynOS_Debug_Init
+  Description:   
+  Inputs:        
+  Returns:       
+-----------------------------------------------------------------------*/
+void CynOS_Debug_Init(void(*write)(char*data,unsigned int len))
+{
+	memset(&gdebug_cfg,0,sizeof(CynOS_Debug_Cfg));
+	gdebug_cfg.write=write;
+	gdebug_cfg.debug_en=0x55;
+}
+/*---------------------------------------------------------------------
+  Function Name: CynOS_Debug_Open
+  Description:   
+  Inputs:        
+  Returns:       
+-----------------------------------------------------------------------*/
+void CynOS_Debug_Open(void)
+{
+	if(gdebug_cfg.write)
+	{
+		gdebug_cfg.debug_en=0x55;
+	}
+}
+/*---------------------------------------------------------------------
+  Function Name: CynOS_Debug_Close
+  Description:   
+  Inputs:        
+  Returns:       
+-----------------------------------------------------------------------*/
+void CynOS_Debug_Close(void)
+{
+	gdebug_cfg.debug_en=0;
+}
 /*---------------------------------------------------------------------
   Function Name: CynOS_Debug
   Description:   
   Inputs:        
   Returns:       
 -----------------------------------------------------------------------*/
-void CynOS_Debug(void(write)(char*data,unsigned int len),char*head,char * format,...)
+void CynOS_Debug(char*head,char * format,...)
 {
 	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE+sizeof(CynOS_Debug_Handle)];
 	CynOS_U16 debuge_len;
@@ -42,7 +78,11 @@ void CynOS_Debug(void(write)(char*data,unsigned int len),char*head,char * format
 	debuge_len+=sprintf((char*)&debug_handle->debug_buff[debuge_len], "[%s]:",head);
     debuge_len += vsprintf((char*)&debug_handle->debug_buff[debuge_len], format, args);
     va_end(args);
-	write((char*)debug_handle->debug_buff,debuge_len);
+	if((gdebug_cfg.write)&&(gdebug_cfg.debug_en==0x55))
+	{
+		gdebug_cfg.write((char*)debug_handle->debug_buff,debuge_len);
+	}
+	
 }
 /*---------------------------------------------------------------------
   Function Name: CynOS_Debug
@@ -50,7 +90,7 @@ void CynOS_Debug(void(write)(char*data,unsigned int len),char*head,char * format
   Inputs:        
   Returns:       
 -----------------------------------------------------------------------*/
-void CynOS_Print_Char(void(write)(char*data,unsigned int len),char * format,...)
+void CynOS_Print_Char(char * format,...)
 {
 	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE+sizeof(CynOS_Debug_Handle)];
 	CynOS_U16 debuge_len;
@@ -64,7 +104,10 @@ void CynOS_Print_Char(void(write)(char*data,unsigned int len),char * format,...)
     va_start(args, format);
     debuge_len += vsprintf((char*)&debug_handle->debug_buff[debuge_len], format, args);
     va_end(args);
-	write((char*)debug_handle->debug_buff,debuge_len);
+	if((gdebug_cfg.write)&&(gdebug_cfg.debug_en==0x55))
+	{
+		gdebug_cfg.write((char*)debug_handle->debug_buff,debuge_len);
+	}
 }
 /*---------------------------------------------------------------------
   Function Name: CynOS_Debug
@@ -72,9 +115,12 @@ void CynOS_Print_Char(void(write)(char*data,unsigned int len),char * format,...)
   Inputs:        
   Returns:       
 -----------------------------------------------------------------------*/
-void CynOS_Print_Hex(void(write)(char*data,unsigned int len),char * data,unsigned int len)
+void CynOS_Print_Hex(char * data,unsigned int len)
 {
-	write(data,len);
+	if((gdebug_cfg.write)&&(gdebug_cfg.debug_en==0x55))
+	{
+		gdebug_cfg.write(data,len);
+	}
 }
 
 
