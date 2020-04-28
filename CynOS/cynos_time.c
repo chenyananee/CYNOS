@@ -70,7 +70,7 @@ char CynOS_tim_base_logout(void(*time_hook)(CynOS_U32 time))
 void CynOS_Systick_Handle(CynOS_U32 timebase)
 {
 	CynOS_U8 index=0;
-	
+
 	if(gcynos_sta.init_sta==0x55)
 	{
 		for(index=0;index<TIME_HOOK_MAX;index++)

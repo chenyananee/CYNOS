@@ -39,10 +39,10 @@ extern "C" {
 #endif
 
 
-
+#include "cynos_task.h"
 #include "cynos_kernel.h"
 #include "cynos_time.h"
-#include "cynos_task.h"
+
 
 
 #if CYNOS_DEBUG_EN

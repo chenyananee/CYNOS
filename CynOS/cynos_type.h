@@ -9,6 +9,19 @@ extern "C" {
 #include "cynos_cfg.h"
 
 
+
+
+
+#define CynOSBIT0 0X01
+#define CynOSBIT1 0X02
+#define CynOSBIT2 0X04
+#define CynOSBIT3 0X08
+#define CynOSBIT4 0X10
+#define CynOSBIT5 0X20
+#define CynOSBIT6 0X40
+#define CynOSBIT7 0X80
+
+
 #if((CPU_LEN==8)||(CPU_LEN==16)||(CPU_LEN==32))
 #define CPU_TYPE CPU_LEN
 #else

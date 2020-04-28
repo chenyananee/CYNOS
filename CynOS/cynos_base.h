@@ -14,15 +14,25 @@ extern "C" {
 #include <limits.h>
 #include <stdarg.h>
 #include "cynos_type.h"
+#include "cynos_funlib.h"
 
-typedef enum
-{
 
-	CYNOS_OK=0,
-	CYNOS_ERR,
-	CYNOS_BUSY,
-	CYNOS_ERR_MEM,
-}CYNOS_STATUS;
+
+
+
+
+
+	typedef enum
+	{
+
+		CYNOS_OK = 0,
+		CYNOS_READY,
+		CYNOS_ERR,
+		CYNOS_TIMEOUT,
+		CYNOS_BUSY,
+		CYNOS_ERR_MEM,
+		CYNOS_ERR_ARG,
+	} CYNOS_STATUS;
 
 
 /* C++ detection */
