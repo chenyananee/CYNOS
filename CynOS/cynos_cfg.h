@@ -38,6 +38,7 @@ extern "C" {
 #define USE_CYNOS_SEM        1
 #define USE_CYNOS_FIFO       1
 #define USE_CYNOS_FIFO_EX    1  
+#define USE_CYNOS_SCHEDULE   1
 
 /*DEBUG CFG*/
 #if USE_CYNOS_DEBUG

@@ -66,23 +66,25 @@ void CynOS_Debug_Close(void)
 void CynOS_Debug(char*head,char * format,...)
 {
 	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE+sizeof(CynOS_Debug_Handle)];
-	CynOS_U16 debuge_len;
+	CynOS_U16 debuge_len = 0;
 	CynOS_Debug_Handle *debug_handle=(CynOS_Debug_Handle *)debugbuff;
 	debug_handle->debugsize=CYNOS_DEBUG_SIZE;
 	
     va_list args;
-	CynOS_Mem_Set(debug_handle->debug_buff,0,debug_handle->debugsize,debug_handle->debugsize);
-	if(!debug_handle->debugsize)
-		return;
+    CynOS_Mem_Set(debug_handle->debug_buff,0,debug_handle->debugsize,debug_handle->debugsize);
+    if(!debug_handle->debugsize)
+      return;
     va_start(args, format);
-	debuge_len+=sprintf((char*)&debug_handle->debug_buff[debuge_len], "[%s]:",head);
+	if (head != NULL)
+	{
+		debuge_len += sprintf((char*)&debug_handle->debug_buff[debuge_len], "\r\n[%s]:",head);
+	}
     debuge_len += vsprintf((char*)&debug_handle->debug_buff[debuge_len], format, args);
     va_end(args);
 	if((gdebug_cfg.write)&&(gdebug_cfg.debug_en==0x55))
 	{
 		gdebug_cfg.write((char*)debug_handle->debug_buff,debuge_len);
 	}
-	
 }
 /*---------------------------------------------------------------------
   Function Name: CynOS_Debug
@@ -93,7 +95,7 @@ void CynOS_Debug(char*head,char * format,...)
 void CynOS_Print_Char(char * format,...)
 {
 	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE+sizeof(CynOS_Debug_Handle)];
-	CynOS_U16 debuge_len;
+	CynOS_U16 debuge_len = 0;
 	CynOS_Debug_Handle *debug_handle=(CynOS_Debug_Handle *)debugbuff;
 	debug_handle->debugsize=CYNOS_DEBUG_SIZE;
 	
@@ -115,11 +117,23 @@ void CynOS_Print_Char(char * format,...)
   Inputs:        
   Returns:       
 -----------------------------------------------------------------------*/
-void CynOS_Print_Hex(char * data,unsigned int len)
+void CynOS_Print_Hex(unsigned char * data,unsigned int len)
 {
-	if((gdebug_cfg.write)&&(gdebug_cfg.debug_en==0x55))
+	CynOS_U8 debugbuff[CYNOS_DEBUG_SIZE];
+	CynOS_U16 debuge_len = 0;
+	
+	while (len--)
 	{
-		gdebug_cfg.write(data,len);
+		debuge_len += sprintf((char*)&debugbuff[debuge_len], "%.2X ", data[0]);
+		data++;
+		if (debuge_len + 2 >= CYNOS_DEBUG_SIZE)
+		{
+			break;
+		}
+	}
+	if((gdebug_cfg.write) && (gdebug_cfg.debug_en == 0x55))
+	{
+		gdebug_cfg.write((char*)&debugbuff[0], debuge_len);
 	}
 }
 

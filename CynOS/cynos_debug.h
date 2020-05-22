@@ -26,7 +26,7 @@ typedef struct
 extern void CynOS_Debug_Init(void(*write)(char*data,unsigned int len));
 extern void CynOS_Debug(char*head,char * format,...);
 extern void CynOS_Print_Char(char * format,...);
-extern void CynOS_Print_Hex(char * data,unsigned int len);
+extern void CynOS_Print_Hex(unsigned char * data,unsigned int len);
 extern void CynOS_Debug_Open(void);
 extern void CynOS_Debug_Close(void);
 

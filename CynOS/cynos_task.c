@@ -52,6 +52,13 @@ void Cynos_Task_Init(CynOSTask_Sta * cynostask_sta)
 	cynostask_sta->_task_next_flow=CynOSTask_FLOW_IDLE;
 }
 
+CynOS_U8 CynosTaskIsInit(CynOSTask_Sta * cynostask_sta)
+{
+	if(cynostask_sta->_init_flag==0X55)
+		return 1;
+	return 0;
+}
+
 void Cynos_TASK_Delay(CynOSTask_Sta * cynostask_sta)
 {
 	if(cynostask_sta->_init_flag)

@@ -32,8 +32,20 @@ CYNOS_STATUS cynos_schedule_get(CynOS_Schedule_Handle * handle,CynOS_U32 id)
 
 CYNOS_STATUS cynos_schedule_append(CynOS_Schedule_Handle *handle,CynOS_U32 id)
 {
+	CynOS_U32 index = 0;
 	if(handle->schedule_len<handle->schedule_fifo_size)
 	{
+		for (index = 0; index < handle->schedule_len;index++)
+		{
+			if(handle->schedule_fifo[index] == id)
+			{
+				if(handle->schedule_fifo[handle->schedule_len-1]==id)
+				{
+					return CYNOS_OK;
+				}
+				return CYNOS_ERR;
+			}
+		}
 		handle->schedule_fifo[handle->schedule_len]=id;
 		handle->schedule_len++;
 		CynOsTaskSchedule(handle->schedule_fifo,handle->schedule_len,sizeof(CynOS_U32),1);

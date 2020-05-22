@@ -31,11 +31,11 @@ typedef enum
 
 typedef struct
 {
-	CynOS_U32  _time_cnt;
-	CynOS_U32  _wait_time;
 	CynOS_U8 _init_flag;
 	CynOS_U8 _task_flow;
 	CynOS_U8 _task_next_flow;
+	CynOS_U32  _time_cnt;
+	CynOS_U32  _wait_time;
 }CynOSTask_Sta;
 
 
