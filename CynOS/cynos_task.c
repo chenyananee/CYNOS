@@ -16,7 +16,7 @@ Copyright 2020 chenyanan
 #include "cynos_cfg.h"
 #include "cynos_kernel.h"
 #include "cynos_task.h"
-#include "app.h"
+#include "user_task.h"
 
 void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,CynOS_U32 wait_time)
 {
@@ -89,10 +89,7 @@ void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time)
 **************************************************************************************/
 void Cynos_UserTask_Init()
 {
-	CynosTask_Creat(lpw_systick,lpwInit,lpwTASK,10);
-	CynosTask_Creat(lcd_systick,lcdInit,lcdTASK,10);
-	CynosTask_Creat(sample_systick,sampleInit,sampleTASK,10);
-	CynosTask_Creat(comm_systick,commInit,commTASK,10);
+	UserTask_Create();
 }
 	
 

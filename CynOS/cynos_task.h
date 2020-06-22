@@ -51,6 +51,8 @@ extern CynOS_U8 Cynos_GetTask_Step(CynOSTask_Sta * cynostask_sta);
 
 extern void Cynos_UserTask_Init(void);
 
+extern CynOS_U8 CynosTaskIsInit(CynOSTask_Sta * cynostask_sta);
+
 /* C++ detection */
 #ifdef __cplusplus
 }
