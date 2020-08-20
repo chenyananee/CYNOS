@@ -142,8 +142,97 @@ CynOS_U32 CynOS_CheckSum (CynOS_U32 init,CynOS_VOID *data, CynOS_U32 len)
 	}
 	return init;
 }
-
+/*
+*********************************************************************************************************
+* 函数名称: CynOS_CheckSum
+*
+* 函数说明: 和校验
+*
+* 入口参数:
+*
+* 返回参数: 拷贝长度
+*
+* 特殊说明:
+*********************************************************************************************************
+*/
+CynOS_U16 CynOS_CRC16X25(CynOS_U8 *data, CynOS_U32 datalen)
+{
+	CynOS_U8 i;
+	CynOS_U16 crc = 0xffff;	// Initial value
+	while(datalen--)
+	{
+		crc ^= *data++;	    // crc ^= *data; data++;
+		for (i = 0; i < 8; ++i)
+		{
+			if (crc & 1)
+				crc = (crc >> 1) ^ 0x8408;	// 0x8408 = reverse 0x1021
+			else
+				crc = (crc >> 1);
+		}
+	}
+	return ~crc;
+}
 /*==============================================DATA================================================================*/
+/*********************************************************************************************************
+* 函数名称: CynOS_Average
+*
+* 函数说明: get Average
+*
+* 入口参数:
+*
+* 返回参数: 
+*
+* 特殊说明:
+*********************************************************************************************************
+*/
+CynOS_Float CynOS_Average(CynOS_S16 *array1,CynOS_U16 len)
+{
+	CynOS_Double sum=0;
+	CynOS_U16 index;
+	for(index=0;index<len;index++)
+	{
+		sum += array1[index];
+	}
+	if(len)
+	{
+		return (sum/len);
+	}
+	else
+	{
+		return 0;
+	}    
+}
+/*********************************************************************************************************
+* 函数名称: CynOS_Pearson
+*
+* 函数说明: 计算曲线相似度
+*
+* 入口参数:
+*
+* 返回参数: 
+*
+* 特殊说明:
+*********************************************************************************************************
+*/
+CynOS_Float CynOS_Pearson(CynOS_S16 *array1,CynOS_S16 *array2, CynOS_U16 len)
+{
+	CynOS_Float ra = CynOS_Average(array1,len);
+    CynOS_Float rb= CynOS_Average(array2,len);
+	CynOS_U16 index;
+	
+    CynOS_Double s = 0, r1 = 0,r2 = 0;
+	
+    for (index = 0; index < len; index++) 
+	{
+        s += (array1[index] - ra) * (array2[index] - rb);
+        r1 += pow(array1[index] - ra, 2);
+        r2 += pow(array2[index] - rb, 2);
+    }
+	
+	r1 = sqrt(r1 * r2);
+	s = (r1 == 0) ? 1 : s / r1;
+    return s;
+}
 /*********************************************************************************************************
 * 函数名称: CynOS_Loop_Add
 *
@@ -194,7 +283,7 @@ CynOS_U8 CynOS_HConvBcd_Single(CynOS_U8  hextemp)
 
 
 /*==============================================calendar================================================================*/
-static CynOS_U32 sMontoMin[12] = {44640, 28, 44640, 43200, 44640, 43200, 44640, 44640, 43200, 44640, 43200, 44640};
+static CynOS_U32 sMonToMin[12] = {44640, 28, 44640, 43200, 44640, 43200, 44640, 44640, 43200, 44640, 43200, 44640};
 
 /*------------------------------------------------------------------------
  Procedure:     CynOS_CalendarClock
@@ -203,36 +292,57 @@ static CynOS_U32 sMontoMin[12] = {44640, 28, 44640, 43200, 44640, 43200, 44640, 
  Output:
  Errors:
 ------------------------------------------------------------------------*/
-CynOS_U32 CynOS_CalendarClock(CynOS_U8 *pTime)
+void CynOS_CalendarClock(CynOS_U32 secend,pCynOS_VCALCLOCK pTime)
 {
-    CynOS_U32 iii = 0, centuryMin = 0;
-	CynOS_U32 wYear = 2000 + pTime[5];
-    if((wYear & 0x03) == 0)
-        sMontoMin[1] = 41760;
-    else
-        sMontoMin[1] = 40320;
+    unsigned long	j, t;
 
-    if(wYear > 11000)
-	{
-		wYear = 11000;
-	}
-
-    for(iii = 1970; iii < wYear; iii++)
+	pTime->bySecond = secend % 60;
+	secend = secend / 60;
+	
+    j = secend / 1440 + 1; /*总天数*/
+    j %= 7;
+    j += 3; /*1970.1.1 星期4*/
+	#ifdef __RTC_WEEK1TO7__
+    if (j > 7) j -= 7;
+	#else
+    if (j >= 7) j -= 7;
+	#endif
+ 	pTime->byWeek = j;
+    for(t = 1970; t < 11000; t++)
     {
-        if((iii & 0x03) == 0)
-            centuryMin += 527040; //366*24*60
+        if((t & 0x03) == 0)
+            j = 527040;			//366*24*60
         else
-            centuryMin += 525600; //365*24*60
+            j = 525600;    //365*24*60
+        if(secend >= j)
+            secend -= j;
+        else
+        {
+            pTime->wYear = (unsigned short)t;
+            break;
+        }
     }
 
-    for(iii = 1; iii < pTime[4]; iii++)
+    if((pTime->wYear & 0x03) == 0)
+        sMonToMin[1] = 41760;
+    else
+        sMonToMin[1] = 40320;
+    for(t = 0; t < 12; t++)
     {
-        centuryMin += sMontoMin[iii - 1];
+        if(secend >= sMonToMin[t]) //24*60;
+            secend -= sMonToMin[t];
+        else
+        {
+            pTime->byMonth = (unsigned char)(t + 1);
+            break;
+        }
     }
-    centuryMin += (CynOS_U32)(pTime[3] - 1) * 1440;
-    centuryMin += (CynOS_U32)pTime[2] * 60;
-    centuryMin += (CynOS_U32)pTime[1];
-    return(centuryMin);
+
+    pTime->byDay = (unsigned char)(secend / 1440 + 1);
+    secend = secend % 1440;
+
+    pTime->byHour = (unsigned char)(secend / 60);
+    pTime->byMinute = (unsigned char)(secend % 60);
 }
 
 /*------------------------------------------------------------------------
@@ -242,84 +352,377 @@ CynOS_U32 CynOS_CalendarClock(CynOS_U8 *pTime)
  Output:
  Errors:
 ------------------------------------------------------------------------*/
-void  CynOS_SystemClock(CynOS_U32 centuryMin, CynOS_U8 *pTime)
+CynOS_U32 CynOS_SystemClock(pCynOS_VCALCLOCK pTime)
 {
-    CynOS_U32	j, t;
+   CynOS_U32 i = 0, t;
 
-    for(t = 1970; t < 11000; t++)
+    if((pTime->wYear & 0x03) == 0)
+        sMonToMin[1] = 41760;
+    else
+        sMonToMin[1] = 40320;
+
+    if(pTime->wYear > 11000)  pTime->wYear = 11000;
+
+    for(t = 1970; t < pTime->wYear; t++)
     {
         if((t & 0x03) == 0)
-        {
-            j = 527040;		//366*24*60
-        }
+            i += 527040; //366*24*60
         else
-        {
-            j = 525600;		//365*24*60
-        }
-        if(centuryMin >= j)
-        {
-            centuryMin -= j;
-        }
-        else
-        {
-            pTime[5] = (unsigned short)t;
-            break;
-        }
+            i += 525600; //365*24*60
     }
 
-	if((centuryMin & 0x03) == 0)
+    for(t = 1; t < pTime->byMonth; t++)
+        i += sMonToMin[t - 1]; //24*60;
+    i += (CynOS_U32)(pTime->byDay - 1) * 1440; //24*60;
+    i += (CynOS_U32)pTime->byHour * 60; //60;
+    i += (CynOS_U32)pTime->byMinute;
+	i *= (CynOS_U32)60;
+    i += (CynOS_U32)pTime->bySecond;
+    return(i);
+}
+
+
+
+
+
+
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+void CynOS_BitStringWrite(CynOS_U8 * bitstring,CynOS_U32 index,CynOS_U8 status)
+{
+	if(status)
 	{
-		sMontoMin[1] = 41760;
+		bitstring[index/8] |= (1<<(index%8));
 	}
 	else
 	{
-		sMontoMin[1] = 40320;
-	}
-	for(t = 0; t < 12; t++)
+		bitstring[index/8] &= ~(1<<(index%8));
+	}	
+}
+
+/****************************************************************
+*FUNCTION NAME: BitStringRead
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 CynOS_BitStringRead(CynOS_U8 * bitstring,CynOS_U32 index)
+{
+	return (bitstring[index/8] >> (index%8))&0x01;
+}
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 _bitmr(CynOS_U8 * source,CynOS_U8 step,CynOS_U32 u8size)
+{
+	CynOS_U8 data_temp=0,pre_data,res=0x99;
+	
+	if(step>8)
 	{
-		if(centuryMin >= sMontoMin[t])
+		return res;
+	}
+	
+	if(step == 0)
+	{
+		return 0;
+	}
+	
+	for(CynOS_U32 iii=0;iii<u8size;iii++)
+	{
+		
+		if(iii == (u8size - 1))
 		{
-			centuryMin -= sMontoMin[t];
+			pre_data = 0;
 		}
 		else
 		{
-			pTime[4] = (BYTE)(t + 1);
-			break;
+			pre_data = source[u8size-iii-2];
+		}	
+		
+		
+		data_temp = source[u8size-iii-1];
+		data_temp >>= step;
+		pre_data <<= (8-step);
+		data_temp |= pre_data;
+		source[u8size-iii-1] = data_temp;
+	}
+	return 0x55;
+}
+
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 _bitml(CynOS_U8 * source,CynOS_U8 step,CynOS_U32 u8size)
+{
+	CynOS_U8 data_temp=0,next_data,res=0x99;
+	
+	if(step>8)
+	{
+		return res;
+	}
+	
+	if(step == 0)
+	{
+		return 0;
+	}
+	
+	for(CynOS_U32 iii=0;iii<u8size;iii++)
+	{
+		
+			if(iii == (u8size - 1))
+			{
+				next_data = 0;
+			}
+			else
+			{
+				next_data = source[iii+1];
+			}	
+			
+			
+			data_temp = source[iii];
+			data_temp <<= step;
+			next_data >>= (8-step);
+			data_temp |= next_data;
+			source[iii] = data_temp;
+	}
+	return 0x55;
+}
+
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 CynOS_BitStringMR(CynOS_U8 * source,CynOS_U32 step,CynOS_U32 u8size)
+{
+	CynOS_U8 bit_step,byte_data;
+	CynOS_U32 byte_step;
+	
+	bit_step = step%8;
+	byte_step = step/8;
+	
+	if(ceil(step*1.0/8)>u8size)
+	{
+		return 0x99;
+	}
+	
+	
+	if(byte_step)
+	{
+		//数组字节移动
+		for(CynOS_U32 iii=u8size;iii>0;iii--)
+		{
+			if(iii>byte_step)
+			{
+				byte_data = source[iii-1-byte_step];
+			}
+			else
+			{
+				byte_data=0;
+			}
+			
+			source[iii-1] = byte_data;
 		}
 	}
-
-	pTime[3] = (CynOS_U8)(centuryMin / 1440 + 1);
-	centuryMin = centuryMin % 1440;
-
-	pTime[2] = (CynOS_U8)(centuryMin / 60);
-	pTime[1] = (CynOS_U8)(centuryMin % 60);
+	//数组位移动
+	if(bit_step)
+	{
+		_bitmr(source,bit_step,u8size);
+	}
+	return 0;
 }
-/*---------------------------------------------------------------------
-  Function Name: CynOS_GetWeekSn
-  Description:   
-  Inputs:        weekType 0:1-6-0,1:1-7
-  Returns:       
------------------------------------------------------------------------*/
-CynOS_U8 CynOS_GetWeekSn(CynOS_U8 weekType, CynOS_U8 * pTime)
+
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+
+CynOS_U32 CynOS_BitStringCount(CynOS_U8 * source,CynOS_U8 status,CynOS_U32 u8size)
 {
-	CynOS_U32	centuryMin = CynOS_CalendarClock(pTime);
-	if (weekType == 1)
+	CynOS_U8 mask,cnt;
+	CynOS_U32 num = 0;
+	mask = (status)?(0xff):(0);
+	
+	//for(CynOS_U32 iii=0;iii<u8size;iii++)
 	{
-		centuryMin -= 4*24*60;
-		centuryMin /= 1440;
-		return (centuryMin%7+1);
+		switch (mask)
+		{
+			case 0:
+				//num of 0
+				for(CynOS_U32 iii=0;iii<u8size;iii++)
+				{
+					if(source[iii])
+					{
+						for(cnt=0;cnt<8;cnt++)
+						{
+							if(!((source[iii]>>cnt)&0x01))
+							{
+								num++;
+							}
+						}
+					}
+					else
+					{
+						num += 8;
+					}
+				}
+				break;
+			case 0xff:
+				// num of 1
+				for(CynOS_U32 iii=0;iii<u8size;iii++)
+				{
+					if(source[iii] != 0xff)
+					{
+						for(cnt=0;cnt<8;cnt++)
+						{
+							if((source[iii]>>cnt)&0x01)
+							{
+								num++;
+							}
+						}
+					}
+					else
+					{
+						num += 8;
+					}
+				}
+				break;
+		}
 	}
-	else
-	{
-		centuryMin -= 3*24*60;
-		centuryMin /= 1440;
-		return (centuryMin%7);
-	}
+	return num;
 }
-
-
-
-
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 CynOS_BitStringML(CynOS_U8 * source,CynOS_U32 step,CynOS_U32 u8size)
+{
+	CynOS_U8 bit_step,byte_data;
+	CynOS_U32 byte_step;
+	
+	bit_step = step%8;
+	byte_step = step/8;
+	
+	if(ceil(step*1.0/8)>u8size)
+	{
+		return 0x99;
+	}
+	
+	
+	if(byte_step)
+	{
+		//数组字节移动
+		for(CynOS_U32 iii=0;iii<u8size;iii++)
+		{
+			if((iii+byte_step) < u8size)
+			{
+				byte_data = source[iii+byte_step];
+			}
+			else
+			{
+				byte_data=0;
+			}
+			
+			source[iii] = byte_data;
+		}
+	}
+	//数组位移动
+	if(bit_step)
+	{
+		_bitml(source,bit_step,u8size);
+	}
+	
+	return 0;
+}
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 CynOS_BitStringOR(CynOS_U8 * dest,CynOS_U8 * source,CynOS_U32 u8size)
+{
+	for(CynOS_U32 iii=0;iii<u8size;iii++)
+	{
+		dest[iii] |= source[iii];
+	}
+	
+	return 0;
+}
+/****************************************************************
+*FUNCTION NAME: AppCCOTask_Comm_Init
+*DESCRIPTION:  
+*INPUT: 
+*OUTPUT: 
+*RETURN: 
+*GLOBAL:  
+*NOTE:     
+*MODIFY        DATE        VERSION        AUTHOR         REASON
+=================================================================
+****************************************************************/
+CynOS_U8 CynOS_BitStringAND(CynOS_U8 * dest,CynOS_U8 * source,CynOS_U32 u8size)
+{
+	for(CynOS_U32 iii=0;iii<u8size;iii++)
+	{
+		dest[iii] &= source[iii];
+	}
+	return 0;
+}
 
 
 

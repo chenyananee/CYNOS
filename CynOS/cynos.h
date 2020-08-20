@@ -38,11 +38,6 @@ extern "C" {
 #define CYNOS_SCHEDULE_EN  USE_CYNOS_SCHEDULE
 #endif
 
-#ifndef USE_CYNOS_BITVARYING
-#define CYNOS_BITVARYING_EN  0
-#else
-#define CYNOS_BITVARYING_EN  USE_CYNOS_BITVARYING
-#endif
 
 #include "cynos_task.h"
 #include "cynos_kernel.h"
@@ -69,10 +64,6 @@ extern "C" {
 
 #if CYNOS_SCHEDULE_EN
 #include "cynos_schedule.h"
-#endif
-
-#if CYNOS_BITVARYING_EN
-#include "cynos_bitvarying.h"
 #endif
 
 /* C++ detection */

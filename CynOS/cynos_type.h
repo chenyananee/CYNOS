@@ -9,7 +9,8 @@ extern "C" {
 #include "cynos_cfg.h"
 
 
-
+#define CynOS_MaybeUnused __attribute__((unused))
+#define CynOS_MemAT(addr) __attribute__((at(addr)))
 
 
 #define CynOSBIT0 0X01
@@ -54,6 +55,8 @@ typedef signed char CynOS_S8;
 typedef signed short CynOS_S16;
 typedef signed int CynOS_S32;
 typedef signed long long  CynOS_S64;
+typedef float   CynOS_Float;
+typedef double  CynOS_Double;
 #elif ((CPU_TYPE==8)||(CPU_TYPE==16))
 typedef unsigned char CynOS_U8;
 typedef unsigned short CynOS_U16;
@@ -63,7 +66,8 @@ typedef signed char CynOS_S8;
 typedef signed short CynOS_S16;
 typedef signed int CynOS_S32;
 typedef signed long long  CynOS_S64;	
-
+typedef float   CynOS_Float;
+typedef double  CynOS_Double;
 #endif
 
 

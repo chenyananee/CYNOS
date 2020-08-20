@@ -16,7 +16,7 @@ Copyright 2020 chenyanan
 #include "cynos_cfg.h"
 #include "cynos_kernel.h"
 #include "cynos_task.h"
-#include "user_task.h"
+#include "app.h"
 
 void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,CynOS_U32 wait_time)
 {

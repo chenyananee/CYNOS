@@ -14,7 +14,7 @@ extern "C" {
 #define CYNOS_KERNEL_DESC    "***************CYNOS***************"
 #define CYNOS_KERNEL_VERSION "SV00.002"
 #define CYNOS_KERNEL_DATE    "20200222"
-#define CYNOS_KERNEL_BUILD_DATA  __DATE__
+#define CYNOS_KERNEL_BUILD_DATE  __DATE__
 #define CYNOS_KERNEL_BUILD_TIME  __TIME__
 
 

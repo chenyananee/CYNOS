@@ -217,8 +217,8 @@ CynOS_U8 CynOS_Get_KernelBuildDate(void * out)
 {
 	CynOS_U8* buf=out;
 	
-	 memcpy(buf,CYNOS_KERNEL_BUILD_DATA,strlen(CYNOS_KERNEL_BUILD_DATA));
-	return strlen(CYNOS_KERNEL_BUILD_DATA);
+	 memcpy(buf,CYNOS_KERNEL_BUILD_DATE,strlen(CYNOS_KERNEL_BUILD_DATE));
+	return strlen(CYNOS_KERNEL_BUILD_DATE);
 }
 
 CynOS_U8 CynOS_Get_KernelBuildTime(void * out)
