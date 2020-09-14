@@ -116,27 +116,29 @@ int main(void)
 | USE_CYNOS_FIFO 	| FIFO模块开关	|
 | USE_CYNOS_FIFO_EX 	| 扩展FIFO开关	|
 
-### 模块配置
-1. DEBUG 配置
+### 模块配置  
+1. DEBUG 配置 
+
 | 宏名 | 描述 |
 | :------------ |:---------------:|
-| CYNOS_DEBUG_SIZE | DEBUG 模块申请内存资源（单位BYTE） |
+| CYNOS_DEBUG_SIZE | DEBUG 模块资源 |
 
-2. FIFO 配置
+2. FIFO 配置 
+
 | 宏名 | 描述 |
 | :------------ |:---------------:|
 | CYNOS_FIFO_SIZE      | FIFO模块占用资源 |
 | CYNOS_FIFO_SIZE_EX | 扩展FIFO模块占用资源  |
 
-3. MUTEX 配置
+3. MUTEX 配置  
+
 | 宏名 | 描述 |
 | :------------ |:---------------:|
 | null      | null |
 
-3. SEM 配置
+3. SEM 配置  
+
 | 宏名 | 描述 |
 | :------------ |:---------------:|
 | null      | null |
 
-
-___
