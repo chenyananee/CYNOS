@@ -27,7 +27,7 @@ ___
 	CynOsStart();
 ```
 ## 移植DEMO
-> 系统移植DEMO - 任务建立及状态机模块的使用示例
+> 系统移植DEMO - 任务建立及状态机模块的使用示例（可查看demo.c）
 ```
 //任务句柄
 CynOSTask_Sta usertask1_handle;
@@ -96,7 +96,7 @@ int main(void)
 | CynOS_Init      | 系统内核初始化 | 初始化内核内存等 |
 | Cynos_UserTask_Init | 用户任务初始化  | 用户在此函数内建立自己的应用任务 |
 | CynOsStart 	| 系统启动	| 开启任务调度 |
-| cynos_time_run 	| 内核时基中断	| 为内核提供合适的系统时间片 |
+| CynOS_Systick_Handle | 内核时基中断	| （*）为内核提供合适的系统时钟 |
 ## 配置文件介绍
 
 ### 模块开关
@@ -114,7 +114,7 @@ int main(void)
 | USE_CYNOS_MUTEX 	| 互斥量模块开关	|
 | USE_CYNOS_SEM 	| 信号量模块开关	|
 | USE_CYNOS_FIFO 	| FIFO模块开关	|
-| USE_CYNOS_FIFO_EX 	| 扩展FIFO开关	|
+| USE_CYNOS_EVENT | 事件功能开关	|
 
 ### 模块配置  
 1. DEBUG 配置 
@@ -128,7 +128,6 @@ int main(void)
 | 宏名 | 描述 |
 | :------------ |:---------------:|
 | CYNOS_FIFO_SIZE      | FIFO模块占用资源 |
-| CYNOS_FIFO_SIZE_EX | 扩展FIFO模块占用资源  |
 
 3. MUTEX 配置  
 
@@ -141,4 +140,10 @@ int main(void)
 | 宏名 | 描述 |
 | :------------ |:---------------:|
 | null      | null |
+
+3. EVENT 配置  
+
+| 宏名 | 描述 |
+| :--- | :--: |
+| null | null |
 
