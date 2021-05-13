@@ -31,22 +31,22 @@ typedef enum
 typedef struct
 {
 	void(*time_hook)(CynOS_U32 time);
-	void(*taskInit)(void);
+	void(*taskConstructor)(void);
+	void(*taskDestructor)(void);
 	void(*task)(void *arg);
-	void * prm;
+	void * arg;
 	CynOS_U32 task_tick;
 	CynOS_U32 task_tick_cnt;
 	CynOS_U8 task_id;
-	CynOS_U8 task_priority; 
 	CynOS_U8 task_event;
 	CynOS_TASK_STA task_sta;
-#if TASK_TIME_HOOK_EN
+#if CYNOS_TASK_TIME_HOOK_EN
 	void(*task_event_time_hook)(void);
 #endif
-#if TASK_PEND_HOOK_EN
+#if CYNOS_TASK_PEND_HOOK_EN
     void(*task_event_pend_hook)(void);
 #endif
-#if TASK_RESUM_HOOK_EN
+#if CYNOS_TASK_RESUM_HOOK_EN
     void(*task_event_resume_hook)(void);
 #endif
 
@@ -86,15 +86,13 @@ extern CynOS_U32 CynOS_Get_Task_ID(void);
 
 extern CYNOS_STATUS CynOS_Get_Task_Info(CynOS_U32 task_id,CynOS_UserTask_Info_Handle * task_info);
 
-extern CYNOS_STATUS CynOsTaskSchedule(CynOS_VOID*taskfifo,CynOS_U32 size,CynOS_U8 typesize,CynOS_U8 dir);
-
 extern void CynOS_PENDING(CynOS_U8 taskid);
 
 extern void CynOS_RESUM(CynOS_U8 taskid);
 
 extern void CynOS_Login_Hook(CynOS_U8 taskid,CynOS_TASK_STA task_type,void(*eventhook)(void));
 
-extern CynOS_U8 CynosTask_Creat(void(*time_hook)(CynOS_U32 time),void(*taskInit)(void),void(*task)(void * arg),CynOS_U32 tasktick);
+extern CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),void(*Constructor)(void),void(*Destructor)(void),void(*task)(void * arg),CynOS_U32 tasktick);
 
 extern CynOS_U8 CynosTask_Delete(CynOS_U8 task_id);
 

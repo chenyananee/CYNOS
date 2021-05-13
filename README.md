@@ -76,7 +76,7 @@ void user_task(void * arg)
 */
 void Cynos_UserTask_Init()
 {
-	CynosTask_Creat(user_task_timehook,user_task_init,user_task,1000);
+	CynosTask_Create(user_task_timehook,user_task_init,user_task,1000);
 }
 
 //主函数
@@ -102,14 +102,14 @@ int main(void)
 ### 模块开关
 | 宏名 | 描述 |
 | :------------ |:---------------:|
-| CPU_LEN      | 系统位宽 |
-| USER_TASK_MAX | 最大用户任务数  |
-| SYSTICK_FRQ 	| 系统时基速度（产生一次中断的时间单位MS）	|
-| TASK_SYSTICK_EN 	| 内核是否根据时间片调度	|
-| TASK_TIME_HOOK_EN 	| 时间片钩函数	|
-| TASK_PEND_HOOK_EN 	| 任务挂起钩函数	|
-| TASK_RESUM_HOOK_EN 	| 任务恢复钩函数	|
-| DEBUG_KERNEL_PRINTF 	| 用户如果开启内核打印的功能需给此处给出打印接口	|
+| CYNOS_CPU_LEN      | 系统位宽 |
+| CYNOS_USER_TASK_MAX | 最大用户任务数  |
+| CYNOS_SYSTICK_FRQ 	| 系统时基速度（产生一次中断的时间单位MS）	|
+| CYNOS_TASK_SYSTICK_EN 	| 内核是否根据时间片调度	|
+| CYNOS_TASK_TIME_HOOK_EN 	| 时间片钩函数	|
+| CYNOS_TASK_PEND_HOOK_EN 	| 任务挂起钩函数	|
+| CYNOS_TASK_RESUM_HOOK_EN 	| 任务恢复钩函数	|
+| CYNOS_DEBUG_KERNEL_PRINT 	| 用户如果开启内核打印的功能需给此处给出打印接口	|
 | USE_CYNOS_DEBUG 	| 调试模块开关	|
 | USE_CYNOS_MUTEX 	| 互斥量模块开关	|
 | USE_CYNOS_SEM 	| 信号量模块开关	|

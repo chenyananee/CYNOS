@@ -1,5 +1,5 @@
 /*
-Copyright 2020 chenyanan
+Copyright © 2020 ChenYanan.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@ Copyright 2020 chenyanan
 #include "cynos_time.h"
 #include "cynos_kernel.h"
 
-time_hook_fun gtime_hook[TIME_HOOK_MAX];
+time_hook_fun gCynosTimebase_Hook[TIME_HOOK_MAX];
 
 
-
-char CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time))
+CYNOS_STATUS CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time))
 {
 	static char cynos_tim_base_init = 0;
 	
@@ -30,9 +29,9 @@ char CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time))
 	{
 		for(index=0;index<TIME_HOOK_MAX;index++)
 		{
-			if(gtime_hook[index]==0)
+			if(gCynosTimebase_Hook[index]==0)
 			{
-				gtime_hook[index]=time_hook;
+				gCynosTimebase_Hook[index]=time_hook;
 				return CYNOS_OK;
 			}
 		}
@@ -42,23 +41,23 @@ char CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time))
 	else
 	{
 		cynos_tim_base_init=0X55;
-		memset(gtime_hook,0,TIME_HOOK_MAX*sizeof(time_hook_fun));
-		gtime_hook[0]=time_hook;
+		memset(gCynosTimebase_Hook,0,TIME_HOOK_MAX*sizeof(time_hook_fun));
+		gCynosTimebase_Hook[0]=time_hook;
 		return CYNOS_OK;
 	}
 	
 }
 
-char CynOS_tim_base_logout(void(*time_hook)(CynOS_U32 time))
+CYNOS_STATUS CynOS_Tim_Base_Logout(void(*time_hook)(CynOS_U32 time))
 {
 	
 	CynOS_U8 index=0;
 	
 	for(index=0;index<TIME_HOOK_MAX;index++)
 	{
-		if(gtime_hook[index]==time_hook)
+		if(gCynosTimebase_Hook[index]==time_hook)
 		{
-			gtime_hook[index]=0;
+			gCynosTimebase_Hook[index]=0;
 			return CYNOS_OK;
 		}
 	}
@@ -66,7 +65,9 @@ char CynOS_tim_base_logout(void(*time_hook)(CynOS_U32 time))
 	return CYNOS_ERR;	
 }
 
-
+/*
+	must run in time interrupt
+*/
 void CynOS_Systick_Handle(CynOS_U32 timebase)
 {
 	CynOS_U8 index=0;
@@ -75,9 +76,9 @@ void CynOS_Systick_Handle(CynOS_U32 timebase)
 	{
 		for(index=0;index<TIME_HOOK_MAX;index++)
 		{
-			if(gtime_hook[index]!=0)
+			if(gCynosTimebase_Hook[index]!=0)
 			{
-				gtime_hook[index](timebase);
+				gCynosTimebase_Hook[index](timebase);
 			}
 		}
 	}

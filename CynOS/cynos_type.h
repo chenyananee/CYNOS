@@ -23,8 +23,8 @@ extern "C" {
 #define CynOSBIT7 0X80
 
 
-#if((CPU_LEN==8)||(CPU_LEN==16)||(CPU_LEN==32))
-#define CPU_TYPE CPU_LEN
+#if((CYNOS_CPU_LEN==8)||(CYNOS_CPU_LEN==16)||(CYNOS_CPU_LEN==32))
+#define CPU_TYPE CYNOS_CPU_LEN
 #else
 #define CPU_TYPE 16
 #endif
