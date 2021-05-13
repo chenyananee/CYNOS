@@ -5,18 +5,18 @@ ___
 ___
 
 ## 特性
-1. 占用少量资源，组件耦合低，可裁剪性强
+1. 占用少量资源，组件耦合低，可裁剪性强，移植简单
 
 2. 方便裸机模块化编程
 
-3. 移植简单
+3. 提供系统模块常用框架
 
 ## 系统裁剪
 
 1. 配置cynos_cfg.h文件即可
 ## 移植方法
 1. 包含cynos.h文件
-2. 在定时器中断内调用void cynos_time_run(CynOS_U32 timebase)函数
+2. 在定时器中断内调用void CynOS_Systick_Handle(CynOS_U32 timebase)函数
 3. 调用系统初始化函数CynOS_Init()
 4. 在Cynos_UserTask_Init()函数内建立用户任务
 5. 启动轮询调度
@@ -68,15 +68,14 @@ void user_task(void * arg)
 	}
 }
 
-/*             
-	arg1 :任务时基回调函数（可无给0）
-    arg2 :任务初始化函数（可无给0）
-    arg3 :任务入口函数（必须有）
-    arg4 :任务调度时间片（按照实际给）
-*/
 void Cynos_UserTask_Init()
 {
-	CynosTask_Create(user_task_timehook,user_task_init,user_task,1000);
+	CynosTask_Create(user_task_timehook, //任务可注册一个基础时钟模块
+					 user_task_init,     //任务构造函数（用于初始化任务内所需要的资源）
+					 0,				     //任务析构函数（用于任务删除时释放任务内的资源）
+					 0,					 //任务参数
+					 user_task,          //任务入口函数
+					 1000);				 //任务运行周期
 }
 
 //主函数

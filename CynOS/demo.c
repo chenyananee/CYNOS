@@ -82,7 +82,12 @@ void user_task(void * arg)
  */
 void Cynos_UserTask_Init()
 {
-	CynosTask_Create(user_task_timehook,user_task_init,0,0,user_task,1000);
+	CynosTask_Create(user_task_timehook, //任务可注册一个基础时钟模块
+					 user_task_init,     //任务构造函数（用于初始化任务内所需要的资源）
+					 0,				     //任务析构函数（用于任务删除时释放任务内的资源）
+					 0,					 //任务参数
+					 user_task,          //任务入口函数
+					 1000);				 //任务运行周期
 }
 
 /**
