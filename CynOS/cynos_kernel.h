@@ -92,8 +92,13 @@ extern void CynOS_RESUM(CynOS_U8 taskid);
 
 extern void CynOS_Login_Hook(CynOS_U8 taskid,CynOS_TASK_STA task_type,void(*eventhook)(void));
 
-extern CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),void(*Constructor)(void),void(*Destructor)(void),void(*task)(void * arg),CynOS_U32 tasktick);
-
+extern CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),
+						  void(*Constructor)(void),
+						  void(*Destructor)(void),
+						  void *arg,
+						  void(*task)(void *arg),
+						  CynOS_U32 tasktick);
+						  
 extern CynOS_U8 CynosTask_Delete(CynOS_U8 task_id);
 
 extern void CynOS_Assert(char asslv,char*head,char*format,...);

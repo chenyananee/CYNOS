@@ -21,7 +21,12 @@ Copyright © 2020 ChenYanan.
 CynOS_Run_Status gcynos_sta;
 CynOS_UserTask_Info_Handle gUserTask[CYNOS_USER_TASK_MAX];
 
-CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),void(*Constructor)(void),void(*Destructor)(void),void(*task)(void * arg),CynOS_U32 tasktick)
+CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),
+						  void(*Constructor)(void),
+						  void(*Destructor)(void),
+						  void *arg,
+						  void(*task)(void *arg),
+						  CynOS_U32 tasktick)
 {
 	CynOS_U8 index=0;
 	if(gcynos_sta.init_sta==0x55)
@@ -38,6 +43,7 @@ CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),void(*Constructor)(vo
 				gUserTask[index].taskDestructor=Destructor;
 				gUserTask[index].time_hook=time_hook;
 				gUserTask[index].task_tick=tasktick;
+				gUserTask[index].arg = arg;
 				if(gUserTask[index].time_hook)
 				{
 					CynOS_Tim_Base_Login(gUserTask[index].time_hook);
