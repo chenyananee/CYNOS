@@ -17,7 +17,6 @@ Copyright © 2020 ChenYanan.
 #include "cynos_kernel.h"
 #include "cynos_event.h"
 
-static CynOS_U16 gEvtQueIndex;
 /**
  * @description: 
  * @param {CynosEventHandle} *evtque_handle
