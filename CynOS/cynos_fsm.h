@@ -7,19 +7,17 @@ extern "C" {
 #endif
 #include "cynos_base.h"
 
-typedef void (*_fsm_entry)(void *handle);
-typedef void (*_fsm_exit)(void *handle);
-typedef void (*_fsm_poll)(void *handle);
-typedef void (*_fsm_event)(void *handle);
+
+typedef void (*_fsm_fun)(void *handle);
 
 
 
 typedef struct 
 {
-    _fsm_entry entry;
-    _fsm_exit exit;
-    _fsm_poll poll;
-    _fsm_event event;
+    _fsm_fun entry;
+    _fsm_fun exit;
+    _fsm_fun poll;
+    _fsm_fun event;
 }_FsmFunc;
 
 

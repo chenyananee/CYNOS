@@ -30,6 +30,8 @@ extern "C" {
 #endif
 
 
+#define CynOS_NULL ((void *)0)
+
 #if (CPU_TYPE==32)
 #define CynOS_S8_MAX (0X7F)
 #define CynOS_S16_MAX (0X7FFF)
