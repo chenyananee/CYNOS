@@ -14,25 +14,26 @@ extern "C" {
 #include <limits.h>
 #include <stdarg.h>
 #include "cynos_type.h"
-#include "cynos_funlib.h"
 
 
 
+typedef void(*CynOSVoidFun)(void);
+typedef void(*CynOSPointFun)(void *arg);
 
 
+#define KERNEL_RUN_FOREVER CynOS_U32_MAX
 
+typedef enum
+{
 
-	typedef enum
-	{
-
-		CYNOS_OK = 0,
-		CYNOS_READY,
-		CYNOS_ERR,
-		CYNOS_TIMEOUT,
-		CYNOS_BUSY,
-		CYNOS_ERR_MEM,
-		CYNOS_ERR_ARG,
-	} CYNOS_STATUS;
+	CYNOS_OK = 0,
+	CYNOS_READY,
+	CYNOS_ERR,
+	CYNOS_TIMEOUT,
+	CYNOS_BUSY,
+	CYNOS_ERR_MEM,
+	CYNOS_ERR_ARG,
+} CYNOS_STATUS;
 
 
 /* C++ detection */

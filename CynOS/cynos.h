@@ -7,63 +7,35 @@ extern "C" {
 #endif
 
 #include "cynos_cfg.h"
-
-#ifndef USE_CYNOS_MUTEX
-#define CYNOS_MUTEX_EN  0
-#else
-#define CYNOS_MUTEX_EN  USE_CYNOS_MUTEX
-#endif
-
-#ifndef USE_CYNOS_FIFO
-#define CYNOS_FIFO_EN  0
-#else
-#define CYNOS_FIFO_EN  USE_CYNOS_FIFO
-#endif
-
-#ifndef USE_CYNOS_SEM
-#define CYNOS_SEM_EN  0
-#else
-#define CYNOS_SEM_EN  USE_CYNOS_SEM
-#endif
-
-#ifndef USE_CYNOS_DEBUG
-#define CYNOS_SLOT_EN  0
-#else
-#define CYNOS_DEBUG_EN  USE_CYNOS_DEBUG
-#endif
-
-#ifndef USE_CYNOS_EVENT
-#define CYNOS_EVENT_EN  0
-#else
-#define CYNOS_EVENT_EN  USE_CYNOS_EVENT
-#endif
-
-
-#include "cynos_task.h"
 #include "cynos_kernel.h"
-#include "cynos_time.h"
+#include "cynos_task.h"
 
 
+#if USE_CYNOS_DEBUG
 
-#if CYNOS_DEBUG_EN
-#include "cynos_debug.h"
 #endif
 
-#if CYNOS_MUTEX_EN
-#include "cynos_mutex.h"
+#if USE_CYNOS_EVENT
+
 #endif
 
-#if CYNOS_FIFO_EN
-#include "cynos_fifo.h"
+#if USE_CYNOS_FIFO
+
 #endif
 
-#if CYNOS_SEM_EN
-#include "cynos_sem.h"
+#if USE_CYNOS_LIST
+
 #endif
 
-#if CYNOS_EVENT_EN
-#include "cynos_event.h"
+#if USE_CYNOS_FSM
+
 #endif
+
+#if USE_CYNOS_TIME
+
+#endif
+
+
 
 /* C++ detection */
 #ifdef __cplusplus

@@ -15,6 +15,15 @@ Copyright © 2020 ChenYanan.
 */
 #include "cynos.h"
 
+//define a kernel obj, name is ui and the max task number is 5
+CREATE_KERNEL_OBJ(ui,5)
+/*
+	//and also you can create other kernel obj for the same time
+	CREATE_KERNEL_OBJ(key,5)
+	CREATE_KERNEL_OBJ(motor,5)
+	CREATE_KERNEL_OBJ(sensor,5)
+*/
+
 /**
  * @description: timer interrupt for 1ms
  * @param {*}
@@ -22,7 +31,7 @@ Copyright © 2020 ChenYanan.
  */
 void timer_interrupt()
 {
-	CynOS_Systick_Handle(1);
+	 CynOS_KernelObj_Tick(CYNOS_KEROBJ(ui),1);
 }
 
 void bsp_init(void)
@@ -30,16 +39,6 @@ void bsp_init(void)
 	//TODO do some bsp init,such like clk_init,gpio_init,or uart_init...
 }
 
-CynOSTask_Sta usertask1_handle;
-/**
- * @description: 
- * @param {CynOS_U32} time
- * @return {*}
- */
-void user_task_timehook(CynOS_U32 time)
-{
-	Cynos_TASK_SystickHandle(&usertask1_handle,time);
-}
 /**
  * @description: 
  * @param {*}
@@ -47,60 +46,34 @@ void user_task_timehook(CynOS_U32 time)
  */
 void user_task_init(void)
 {
-	Cynos_Task_Init(&usertask1_handle);
+	
 }
 /**
  * @description: 
  * @param {void} *
  * @return {*}
  */
-void user_task(void * arg)
+void user_task(void *id)
 {
-	switch(Cynos_GetTask_Step(&usertask1_handle))
-	{
-		case CynOSTask_FLOW_IDLE:
-			Cynos_TASK_Jump(&usertask1_handle,CynOSTask_FLOW_STEP_1,0);
-			break;
-		case CynOSTask_FLOW_STEP_1:
-			Cynos_TASK_Jump(&usertask1_handle,CynOSTask_FLOW_STEP_2,0);
-			break;
-		case CynOSTask_FLOW_STEP_2:
-			Cynos_TASK_Jump(&usertask1_handle,CynOSTask_FLOW_IDLE,0);
-			break;
-		case CynOSTask_FLOW_DELAY:
-			Cynos_TASK_Delay(&usertask1_handle);
-			break;
-		default:
-			Cynos_TASK_Jump(&usertask1_handle,CynOSTask_FLOW_IDLE,0);
-			break;
-	}
-}
-/**
- * @description: 
- * @param {*}
- * @return {*}
- */
-void Cynos_UserTask_Init()
-{
-	CynosTask_Create(user_task_timehook, //任务可注册一个基础时钟模块
-					 user_task_init,     //任务构造函数（用于初始化任务内所需要的资源）
-					 0,				     //任务析构函数（用于任务删除时释放任务内的资源）
-					 0,					 //任务参数
-					 user_task,          //任务入口函数
-					 1000);				 //任务运行周期
+	
 }
 
 /**
- * @description: 
+ * @description: the usertask will be run for every secend
  * @param {*}
  * @return {*}
  */
 int main(void)
 {
 	bsp_init();
-	CynOS_Init();
-	Cynos_UserTask_Init();
-	CynOsStart();
+	CynOS_KernelObj_Init(CYNOS_KEROBJ(ui),5,0);
+    CynOS_Kernel_Task_Create(CYNOS_KEROBJ(ui),user_task_init,user_task,1000);
+	/*
+	CynOS_Kernel_Task_Create(CYNOS_KEROBJ(key),key_task_init,user_task,10);
+	CynOS_Kernel_Task_Create(CYNOS_KEROBJ(motor),motor_task_init,user_task,50);
+	CynOS_Kernel_Task_Create(CYNOS_KEROBJ(sensor),sensor_task_init,user_task,2000);
+	*/
+	CynOS_Start(CYNOS_KEROBJ(ui),KERNEL_RUN_FOREVER);
 }
 
 

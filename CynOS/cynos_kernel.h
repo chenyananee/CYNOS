@@ -8,103 +8,72 @@ extern "C" {
 
 #include "cynos_base.h"
 #include "cynos_cfg.h"
-
+#include "cynos_task.h"
 
 
 #define CYNOS_KERNEL_DESC    "***************CYNOS***************"
-#define CYNOS_KERNEL_VERSION "SV00.002"
-#define CYNOS_KERNEL_DATE    "20200222"
+#define CYNOS_KERNEL_VERSION "SV03.000"
+#define CYNOS_KERNEL_DATE    "20210909"
 #define CYNOS_KERNEL_BUILD_DATE  __DATE__
 #define CYNOS_KERNEL_BUILD_TIME  __TIME__
 
-
-typedef enum
-{
-	CynOS_TASK_EVENT_NULL=0,
-	CynOS_TASK_EVENT_RUN=0X01,
-	CynOS_TASK_EVENT_TIME=0X02,
-	CynOS_TASK_EVENT_PEND=0X04,
-	CynOS_TASK_EVENT_RESUM=0X08,
-}CynOS_TASK_STA;
-
+#define CYNOS_KERNEL_RUN 	0X10
+#define CYNOS_KERNEL_STOP 	0X20
+#define CYNOS_KERNEL_RESET 	0X30
 
 typedef struct
 {
-	void(*time_hook)(CynOS_U32 time);
-	void(*taskConstructor)(void);
-	void(*taskDestructor)(void);
-	void(*task)(void *arg);
-	void * arg;
-	CynOS_U32 task_tick;
-	CynOS_U32 task_tick_cnt;
-	CynOS_U8 task_id;
-	CynOS_U8 task_event;
-	CynOS_TASK_STA task_sta;
-#if CYNOS_TASK_TIME_HOOK_EN
-	void(*task_event_time_hook)(void);
-#endif
-#if CYNOS_TASK_PEND_HOOK_EN
-    void(*task_event_pend_hook)(void);
-#endif
-#if CYNOS_TASK_RESUM_HOOK_EN
-    void(*task_event_resume_hook)(void);
-#endif
-
-}CynOS_UserTask_Info_Handle;
-
-
-
-typedef struct
-{
-	CynOS_U8 init_sta;
 	CynOS_U32 task_id;
-}CynOS_Run_Status;
+	struct
+	{
+		CynOS_U8 init_flag : 1;
+	}obj_flag;
+	CynOS_U8 kernelstatus;
+	CynOS_U8 tasknum;
+	CynOSTaskHandle task[];
+}CynOS_ObjHandle;
 
 
- 
-
-extern CynOS_Run_Status gcynos_sta;
-
-
-
+/*
+	create the kernel object
+	__N: handle name
+	__S: task's num
+*/
+#define CREATE_KERNEL_OBJ(__N,__S) \
+CynOS_U8 __N ## OBJ_MEM[sizeof(CynOS_ObjHandle)+sizeof(CynOSTaskHandle)*__S];\
+CynOS_ObjHandle *KernelObj_ ## __N = (CynOS_ObjHandle *)__N ## OBJ_MEM;
+/*
+	get the kernel object's handle
+*/
+#define CYNOS_KEROBJ(N) KernelObj_##N
 /*----------------------------------Kernel Info-------------------------------------*/
-extern CynOS_U8 CynOS_Get_KernelVersion(void * out);  
 
-extern CynOS_U8 CynOS_Get_KernelDate(void * out);     
+/*
+	start the kernel obj
+*/
+extern CynOS_VOID CynOS_Start(CynOS_ObjHandle *obj,CynOS_U32 run_cnt);
 
-extern CynOS_U8 CynOS_Get_KernelBuildDate(void * out);
+/*
+	the kernel obj init
+*/
+extern CYNOS_STATUS CynOS_KernelObj_Init(CynOS_ObjHandle *obj,CynOS_U8 max_task,CynOSVoidFun init_fun);
 
-extern CynOS_U8 CynOS_Get_KernelBuildTime(void * out);
+/*
+	the kernel obj's tick interrupt, it must be run in the time interrupt
+*/
+extern CynOS_VOID CynOS_KernelObj_Tick(CynOS_ObjHandle *obj,CynOS_U32 tick);
 
-
-/*----------------------------------Task Info-------------------------------------*/
-extern void CynOS_Init(void);    
-
-extern void CynOsStart(void);
-
-extern CynOS_U32 CynOS_Get_Task_ID(void);
-
-extern CYNOS_STATUS CynOS_Get_Task_Info(CynOS_U32 task_id,CynOS_UserTask_Info_Handle * task_info);
-
-extern void CynOS_PENDING(CynOS_U8 taskid);
-
-extern void CynOS_RESUM(CynOS_U8 taskid);
-
-extern void CynOS_Login_Hook(CynOS_U8 taskid,CynOS_TASK_STA task_type,void(*eventhook)(void));
-
-extern CynOS_U8 CynosTask_Create(void(*time_hook)(CynOS_U32 time),
-						  void(*Constructor)(void),
-						  void(*Destructor)(void),
-						  void *arg,
-						  void(*task)(void *arg),
-						  CynOS_U32 tasktick);
-						  
-extern CynOS_U8 CynosTask_Delete(CynOS_U8 task_id);
-
-extern void CynOS_Assert(char asslv,char*head,char*format,...);
-
-
-
+/*
+	create a task with the kernel obj
+*/
+extern CYNOS_STATUS CynOS_Kernel_Task_Create(CynOS_ObjHandle *obj,
+									  CynOSVoidFun init_fun,
+									  CynOSVoidFun entry,
+									  CynOS_U32 tick);
+/*
+	set the kernel obj's status like: run , stop or reset
+*/
+extern CynOS_VOID CynOS_KernelObj_Set_Status(CynOS_ObjHandle *obj,CynOS_U32 status);
 
 /* C++ detection */
 #ifdef __cplusplus

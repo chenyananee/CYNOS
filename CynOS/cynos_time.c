@@ -13,72 +13,143 @@ Copyright © 2020 ChenYanan.
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#include "cynos_cfg.h"
+
 #include "cynos_time.h"
-#include "cynos_kernel.h"
 
-time_hook_fun gCynosTimebase_Hook[TIME_HOOK_MAX];
+CREATE_TIME_OBJ(CYN_TIM,CYNOS_TIME_SIZE)
 
-
-CYNOS_STATUS CynOS_Tim_Base_Login(void(*time_hook)(CynOS_U32 time))
+void CynOS_TimeHandle_Init(CynOS_TimeHandle *handle,CynOS_U8 timenum)
 {
-	static char cynos_tim_base_init = 0;
-	
-	CynOS_U8 index=0;
-	if(cynos_tim_base_init)
-	{
-		for(index=0;index<TIME_HOOK_MAX;index++)
-		{
-			if(gCynosTimebase_Hook[index]==0)
-			{
-				gCynosTimebase_Hook[index]=time_hook;
-				return CYNOS_OK;
-			}
-		}
-		
-		return CYNOS_ERR_MEM;
-	}
-	else
-	{
-		cynos_tim_base_init=0X55;
-		memset(gCynosTimebase_Hook,0,TIME_HOOK_MAX*sizeof(time_hook_fun));
-		gCynosTimebase_Hook[0]=time_hook;
-		return CYNOS_OK;
-	}
-	
-}
-
-CYNOS_STATUS CynOS_Tim_Base_Logout(void(*time_hook)(CynOS_U32 time))
-{
-	
-	CynOS_U8 index=0;
-	
-	for(index=0;index<TIME_HOOK_MAX;index++)
-	{
-		if(gCynosTimebase_Hook[index]==time_hook)
-		{
-			gCynosTimebase_Hook[index]=0;
-			return CYNOS_OK;
-		}
-	}
-	
-	return CYNOS_ERR;	
+	memset(handle,0,sizeof(CynOS_TimeHandle) + sizeof(CynOSTime) * timenum);
+	handle->timeNum = timenum;
+	handle->init = 0x55;
 }
 
 /*
-	must run in time interrupt
+	Init the time
 */
-void CynOS_Systick_Handle(CynOS_U32 timebase)
+void CynOS_Time_Init(void)
 {
-	CynOS_U8 index=0;
+	CynOS_TimeHandle_Init(CYNOS_TME(CYN_TIM),CYNOS_TIME_SIZE);
+}
 
-	if(gcynos_sta.init_sta==0x55)
+/*
+	Start the time by id
+*/
+CYNOS_STATUS CynOS_Time_Start(CynOS_U8 id)
+{
+	for(CynOS_U8 i = 0; i < CYNOS_TME(CYN_TIM)->timeNum; i++)
 	{
-		for(index=0;index<TIME_HOOK_MAX;index++)
+		if(CYNOS_TME(CYN_TIM)->time[i].time_flag.avl_flag)
 		{
-			if(gCynosTimebase_Hook[index]!=0)
+			if(CYNOS_TME(CYN_TIM)->time[i].id == id)
 			{
-				gCynosTimebase_Hook[index](timebase);
+				CYNOS_TME(CYN_TIM)->time[i].time_flag.status_flag = CYNOS_TIME_RUN;
+			}
+		}
+	}
+
+	return CYNOS_OK;
+}
+/*
+	Stop the time by id
+*/
+CYNOS_STATUS CynOS_Time_Stop(CynOS_U8 id)
+{
+	for(CynOS_U8 i = 0; i < CYNOS_TME(CYN_TIM)->timeNum; i++)
+	{
+		if(CYNOS_TME(CYN_TIM)->time[i].time_flag.avl_flag)
+		{
+			if(CYNOS_TME(CYN_TIM)->time[i].id == id)
+			{
+				CYNOS_TME(CYN_TIM)->time[i].time_flag.status_flag = !CYNOS_TIME_RUN;
+			}
+		}
+	}
+
+	return CYNOS_OK;
+}
+
+/*
+	create the time by id
+*/
+CYNOS_STATUS CynOS_Time_Login(CynOS_U32 tick,CynOSPointFun cb,CynOS_U8 id)
+{
+	CynOS_U8 free_index=CynOS_U8_MAX,index=CynOS_U8_MAX;
+
+	for(CynOS_U8 i = 0; i < CYNOS_TME(CYN_TIM)->timeNum; i++)
+	{
+		if(!CYNOS_TME(CYN_TIM)->time[i].time_flag.avl_flag)
+		{
+			if(free_index == 0xff)
+			{
+				free_index = i;
+			}
+		}
+		if(CYNOS_TME(CYN_TIM)->time[i].id == id)
+		{
+			index = i;
+			break;
+		}
+	}
+
+	if(index == CynOS_U8_MAX)
+	{
+		if(free_index != CynOS_U8_MAX)
+		{
+			memset(&CYNOS_TME(CYN_TIM)->time[free_index],0,sizeof(CynOSTime));
+			CYNOS_TME(CYN_TIM)->time[free_index].time_flag.avl_flag = 1;
+			CYNOS_TME(CYN_TIM)->time[free_index].cb_entry = cb;
+			CYNOS_TME(CYN_TIM)->time[free_index].frq = tick;
+			CYNOS_TME(CYN_TIM)->time[free_index].id = id;
+			CYNOS_TME(CYN_TIM)->time[free_index].time_flag.status_flag = CYNOS_TIME_RUN;
+			return CYNOS_OK;
+		}
+		return CYNOS_ERR;
+	}
+}
+/*
+	DELETE the time by id
+*/
+CYNOS_STATUS CynOS_Time_Logout(CynOS_U8 id)
+{
+	for(CynOS_U8 i = 0; i < CYNOS_TME(CYN_TIM)->timeNum; i++)
+	{
+		if(CYNOS_TME(CYN_TIM)->time[i].time_flag.avl_flag)
+		{
+			if(CYNOS_TME(CYN_TIM)->time[i].id == id)
+			{
+				CYNOS_TME(CYN_TIM)->time[i].time_flag.avl_flag = 0;
+			}
+		}
+	}
+
+	return CYNOS_OK;
+}
+
+/*
+	must be run in time interrupt
+*/
+void CynOS_Time_TickInterrupt(CynOS_U32 timebase)
+{
+	if(CYNOS_TME(CYN_TIM)->init)
+	{
+		for(CynOS_U8 i=0;i<CYNOS_TME(CYN_TIM)->timeNum;i++)
+		{
+			if(CYNOS_TME(CYN_TIM)->time[i].time_flag.avl_flag)
+			{
+				if(CYNOS_TME(CYN_TIM)->time[i].time_flag.status_flag == CYNOS_TIME_RUN)
+				{
+					CYNOS_TME(CYN_TIM)->time[i].time_cnt += timebase;
+					if(CYNOS_TME(CYN_TIM)->time[i].time_cnt >= CYNOS_TME(CYN_TIM)->time[i].frq)
+					{
+						CYNOS_TME(CYN_TIM)->time[i].time_cnt = 0;
+						if(CYNOS_TME(CYN_TIM)->time[i].cb_entry)
+						{
+							CYNOS_TME(CYN_TIM)->time[i].cb_entry(&timebase);
+						}
+					}
+				}
 			}
 		}
 	}

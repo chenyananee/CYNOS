@@ -14,84 +14,73 @@ Copyright ? 2020 ChenYanan.
    limitations under the License.
 */
 #include "cynos_cfg.h"
-#include "cynos_kernel.h"
 #include "cynos_task.h"
 
-
-void Cynos_TASK_Jump(CynOSTask_Sta * cynostask_sta,CynOSTask_FLOW next_step,CynOS_U32 wait_time)
+CYNOS_STATUS CynOS_TaskHandleInit(CynOSTaskHandle *taskhandle,CynOSVoidFun init_fun,CynOSPointFun entry,CynOS_U32 tick)
 {
-	if(cynostask_sta->_init_flag)
+	if(!taskhandle) return CYNOS_ERR_MEM;
+
+	memset(taskhandle,0,sizeof(CynOSTaskHandle));
+	taskhandle->init = init_fun;
+	taskhandle->_task_current_flow = CynOSTask_FLOW_IDLE;
+	taskhandle->task_entry = entry;
+	taskhandle->task_frq = tick;
+	taskhandle->task_flag.avl_flag = 1;
+	return CYNOS_OK;
+}
+
+
+CynOS_VOID Cynos_TASK_Jump(CynOSTaskHandle * handle,CynOS_U32 next_step,CynOS_U32 wait_time)
+{
+	if(!handle) return;
+
+	if(handle->task_flag.init_flag)
 	{
-		cynostask_sta->_task_next_flow=next_step;
+		handle->_task_next_flow=next_step;
 		if(wait_time==0)
 		{
-			cynostask_sta->_task_flow=next_step;
+			handle->_task_current_flow=next_step;
 		}
 		else
 		{
-			cynostask_sta->_task_flow=CynOSTask_FLOW_DELAY;
+			handle->_task_current_flow=CynOSTask_FLOW_DELAY;
 		}
 		
-		cynostask_sta->_wait_time=wait_time;
-		cynostask_sta->_time_cnt=0;
+		handle->delay=wait_time;
+		handle->delay_cnt=0;
 	}
 }
-CynOS_U8 Cynos_GetTask_Step(CynOSTask_Sta * cynostask_sta)
+
+CynOS_U8 Cynos_GetTask_Step(CynOSTaskHandle * handle)
 {
-	if(cynostask_sta->_init_flag)
+	if(handle->task_flag.init_flag)
 	{
-		return cynostask_sta->_task_flow;
+		return handle->_task_current_flow;
 	}
 	return CynOSTask_FLOW_IDLE;
 }
-void Cynos_Task_Init(CynOSTask_Sta * cynostask_sta)
-{
-	memset(cynostask_sta,0,sizeof(CynOSTask_Sta));
-	cynostask_sta->_init_flag=0X55;
-	cynostask_sta->_task_flow=CynOSTask_FLOW_IDLE;
-	cynostask_sta->_task_next_flow=CynOSTask_FLOW_IDLE;
-}
 
-CynOS_U8 CynosTaskIsInit(CynOSTask_Sta * cynostask_sta)
+CynOS_VOID Cynos_TASK_Delay(CynOSTaskHandle * handle)
 {
-	if(cynostask_sta->_init_flag==0X55)
-		return 1;
-	return 0;
-}
-
-void Cynos_TASK_Delay(CynOSTask_Sta * cynostask_sta)
-{
-	if(cynostask_sta->_init_flag)
+	if(handle->task_flag.init_flag)
 	{
-		if(cynostask_sta->_time_cnt>=cynostask_sta->_wait_time)
+		if(handle->delay_cnt>=handle->delay)
 		{
-			cynostask_sta->_task_flow=cynostask_sta->_task_next_flow;
-			cynostask_sta->_wait_time=0;
-			cynostask_sta->_time_cnt=0;
+			handle->_task_current_flow=handle->_task_next_flow;
+			handle->delay_cnt=0;
+			handle->delay=0;
 		}
 	}
 }
 
 
-void Cynos_TASK_SystickHandle(CynOSTask_Sta * cynostask_sta,CynOS_U32 time)
+CynOS_VOID Cynos_TASK_SystickHandle(CynOSTaskHandle * handle,CynOS_U32 tick)
 {
-	if(cynostask_sta->_init_flag)
-	{
-		cynostask_sta->_time_cnt+=time;
-	}
+	handle->delay_cnt += tick;
+	handle->task_time_cnt += tick;
 }
 
-/**************************************************************************************
-*
-*						    初始化用户任务
-*						    
-*
-**************************************************************************************/
-void Cynos_UserTask_Init()
-{
-	UserTask_Create();
-}
-	
+
 
 
 
