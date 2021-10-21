@@ -130,7 +130,7 @@ typedef enum {
 }sta;
 
 CYNOS_FSM_INIT_BEGIN(Motor)
-CYNOS_FSM_INFO_INIT(1,2,3)
+CYNOS_FSM_INFO_INIT(em_sta1,em_sta1,em_sta1)
 CYNOS_FSM_FUNC_INIT(
 CYNOS_FSM_FUNC_MAP(sta1,sta1,sta1,sta1)
 CYNOS_FSM_FUNC_MAP(sta2,sta2,sta2,sta2)

@@ -59,9 +59,9 @@ typedef struct _CynOSFsm_Handle
 
 
 #define CYNOS_FSM_INFO_INIT(__last,__current,__next) \
-        .info.last = 0, \
-        .info.current = 0, \
-        .info.next = 0,
+        .info.last = __last, \
+        .info.current = __current, \
+        .info.next = __next,
 
 #define CYNOS_FSM_FUNC_INIT(__map_list)       \
         .func = { __map_list } 
