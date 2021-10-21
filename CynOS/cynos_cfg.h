@@ -26,7 +26,6 @@ extern "C" {
 #define USE_CYNOS_EVENT      0
 #define USE_CYNOS_FIFO       0
 #define USE_CYNOS_LIST       0
-#define USE_CYNOS_FSM        0
 #define USE_CYNOS_TIME       0
 
 /*DEBUG CFG*/

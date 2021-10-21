@@ -15,14 +15,14 @@ Copyright ? 2020 ChenYanan.
 */
 #include "cynos_cfg.h"
 #include "cynos_task.h"
-
+#include "cynos_fsm.h"
 CYNOS_STATUS CynOS_TaskHandleInit(CynOSTaskHandle *taskhandle,CynOSVoidFun init_fun,CynOSPointFun entry,CynOS_U32 tick)
 {
 	if(!taskhandle) return CYNOS_ERR_MEM;
 
 	memset(taskhandle,0,sizeof(CynOSTaskHandle));
 	taskhandle->init = init_fun;
-	taskhandle->_task_current_flow = CynOSTask_FLOW_IDLE;
+	taskhandle->fsm._task_current_flow = CynOSTask_FLOW_IDLE;
 	taskhandle->task_entry = entry;
 	taskhandle->task_frq = tick;
 	taskhandle->task_flag.avl_flag = 1;
@@ -34,28 +34,13 @@ CynOS_VOID Cynos_TASK_Jump(CynOSTaskHandle * handle,CynOS_U32 next_step,CynOS_U3
 {
 	if(!handle) return;
 
-	if(handle->task_flag.init_flag)
-	{
-		handle->_task_next_flow=next_step;
-		if(wait_time==0)
-		{
-			handle->_task_current_flow=next_step;
-		}
-		else
-		{
-			handle->_task_current_flow=CynOSTask_FLOW_DELAY;
-		}
-		
-		handle->delay=wait_time;
-		handle->delay_cnt=0;
-	}
 }
 
 CynOS_U8 Cynos_GetTask_Step(CynOSTaskHandle * handle)
 {
 	if(handle->task_flag.init_flag)
 	{
-		return handle->_task_current_flow;
+		return Cynos_FsmSC_GetStep(handle);
 	}
 	return CynOSTask_FLOW_IDLE;
 }
@@ -64,19 +49,14 @@ CynOS_VOID Cynos_TASK_Delay(CynOSTaskHandle * handle)
 {
 	if(handle->task_flag.init_flag)
 	{
-		if(handle->delay_cnt>=handle->delay)
-		{
-			handle->_task_current_flow=handle->_task_next_flow;
-			handle->delay_cnt=0;
-			handle->delay=0;
-		}
+		Cynos_FsmSC_Wait(handle);
 	}
 }
 
 
 CynOS_VOID Cynos_TASK_SystickHandle(CynOSTaskHandle * handle,CynOS_U32 tick)
 {
-	handle->delay_cnt += tick;
+	Cynos_FsmSC_TimeHook(handle,tick);
 	handle->task_time_cnt += tick;
 }
 

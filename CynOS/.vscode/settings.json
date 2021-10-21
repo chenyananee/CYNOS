@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "cynos_time.h": "c",
-        "cynos_cfg.h": "c",
-        "cynos_task.h": "c",
-        "cynos_kernel.h": "c",
-        "cynos_base.h": "c"
-    }
-}

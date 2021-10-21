@@ -17,13 +17,86 @@ Copyright © 2020 ChenYanan.
 #include "cynos_fsm.h"
 
 
+
+/**/
+/**
+ * @description: 
+ * @param {CynOSFsm_Handle} *fsm
+ * @return {*}
+ */
+CynOS_VOID Cynos_FsmSC_Jump(CynOS_VOID *scFsm,CynOS_U8 next_step,CynOS_U32 wait_time)
+{
+	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+
+	if(!fsm) return;
+
+	fsm->_task_next_flow=next_step;
+	if(wait_time==0)
+	{
+		fsm->_task_current_flow=fsm->_task_next_flow;
+	}
+	else
+	{
+		fsm->_task_current_flow=CynOSTask_FLOW_DELAY;
+	}
+	
+	fsm->delay=wait_time;
+	fsm->delay_cnt=0;
+}
+
+/**
+ * @description: 
+ * @param {CynOSFsm_Handle} *fsm
+ * @return {*}
+ */
+CynOS_VOID Cynos_FsmSC_TimeHook(CynOS_VOID *scFsm,CynOS_U32 tick)
+{
+	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+
+	if(!fsm) return;
+
+	fsm->delay_cnt += tick;
+}
+
+/**
+ * @description: 
+ * @param {CynOSFsm_Handle} *fsm
+ * @return {*}
+ */
+CynOS_U8 Cynos_FsmSC_GetStep(CynOS_VOID *scFsm)
+{
+	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+
+	if(!fsm) return;
+
+	return fsm->_task_current_flow;
+}
+/**
+ * @description: 
+ * @param {CynOSFsm_Handle} *fsm
+ * @return {*}
+ */
+CynOS_VOID Cynos_FsmSC_Wait(CynOS_VOID *scFsm)
+{
+	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+
+	if(!fsm) return;
+
+	if(fsm->delay_cnt>=fsm->delay)
+	{
+		fsm->_task_current_flow=fsm->_task_next_flow;
+		fsm->delay_cnt=0;
+		fsm->delay=0;
+	}
+}
+
 /**
  * @description: 
  * @param {CynOSFsm_Handle} *fsm: fsm handle
  * @param {int} newstatus:the status that we want to go
  * @return {*}
  */
-void Cynos_Fsm_Jump(CynOSFsm_Handle *fsm,int newstatus)
+CynOS_VOID Cynos_Fsm_Jump(CynOSFsm_Handle *fsm,int newstatus)
 {
 	fsm->info.next = newstatus;
 	fsm->func[fsm->info.current].exit(fsm);
@@ -36,7 +109,7 @@ void Cynos_Fsm_Jump(CynOSFsm_Handle *fsm,int newstatus)
  * @param {CynOSFsm_Handle} *fsm
  * @return {*}
  */
-void Cynos_Fsm_Goback(CynOSFsm_Handle *fsm)
+CynOS_VOID Cynos_Fsm_Goback(CynOSFsm_Handle *fsm)
 {
 	Cynos_Fsm_Jump(fsm,fsm->info.last);
 }

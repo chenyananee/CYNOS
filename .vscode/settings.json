@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "cynos_cfg.h": "c",
-        "cynos_kernel.h": "c",
-        "cynos.h": "c"
-    }
-}

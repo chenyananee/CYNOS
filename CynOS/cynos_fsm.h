@@ -8,6 +8,26 @@ extern "C" {
 #include "cynos_base.h"
 
 
+/* fsm for switch/case begin*/
+
+#define CynOSTask_FLOW_IDLE 0X0
+#define CynOSTask_FLOW_DELAY 0xFF
+
+typedef struct 
+{
+    CynOS_U8 _task_current_flow;
+	CynOS_U8 _task_next_flow;
+	CynOS_U32 delay_cnt;
+	CynOS_U32 delay;
+}FSM_SC_Handle;
+
+/* fsm for switch/case end*/
+
+
+
+
+/* fsm for status begin*/
+
 typedef void (*_fsm_fun)(void *handle);
 
 
@@ -58,7 +78,16 @@ typedef struct _CynOSFsm_Handle
 
 
 #define CYNOS_FSM_INIT_END };
+/* fsm for status end*/
 
+
+extern CynOS_VOID Cynos_Fsm_Jump(CynOSFsm_Handle *fsm,int newstatus);
+extern CynOS_VOID Cynos_Fsm_Goback(CynOSFsm_Handle *fsm);
+
+extern CynOS_VOID Cynos_FsmSC_Jump(CynOS_VOID *scFsm,CynOS_U8 next_step,CynOS_U32 wait_time);
+extern CynOS_VOID Cynos_FsmSC_TimeHook(CynOS_VOID *scFsm,CynOS_U32 tick);
+extern CynOS_VOID Cynos_FsmSC_Wait(CynOS_VOID *scFsm);
+extern CynOS_U8 Cynos_FsmSC_GetStep(CynOS_VOID *scFsm);
 /* C++ detection */
 #ifdef __cplusplus
 }

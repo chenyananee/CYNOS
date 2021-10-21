@@ -6,12 +6,12 @@
 extern "C" {
 #endif
 #include "cynos_base.h"
+#include "cynos_fsm.h"
 
-#define CynOSTask_FLOW_IDLE 0X0
-#define CynOSTask_FLOW_DELAY 0xFF
 
 typedef struct
 {
+	FSM_SC_Handle fsm;     //must be 1st
 	struct
 	{
 		CynOS_U8 avl_flag : 1;
@@ -20,13 +20,8 @@ typedef struct
 
 	CynOSVoidFun init;
 	CynOSPointFun task_entry;
-	
-	CynOS_U8 id;
-	CynOS_U8 _task_current_flow;
-	CynOS_U8 _task_next_flow;
 
-	CynOS_U32 delay_cnt;
-	CynOS_U32 delay;
+	CynOS_U8 id;
 
 	CynOS_U32  task_time_cnt;
 	CynOS_U32  task_frq;
@@ -37,6 +32,7 @@ extern CynOS_VOID Cynos_TASK_SystickHandle(CynOSTaskHandle * handle,CynOS_U32 ti
 extern CynOS_VOID Cynos_TASK_Delay(CynOSTaskHandle * handle);
 extern CynOS_U8 Cynos_GetTask_Step(CynOSTaskHandle * handle);
 extern CynOS_VOID Cynos_TASK_Jump(CynOSTaskHandle * handle,CynOS_U32 next_step,CynOS_U32 wait_time);
+
 
 
 /* C++ detection */

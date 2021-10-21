@@ -9,7 +9,7 @@ extern "C" {
 #include "cynos_cfg.h"
 #include "cynos_kernel.h"
 #include "cynos_task.h"
-
+#include "cynos_fsm.h"
 
 #if USE_CYNOS_DEBUG
 
@@ -24,10 +24,6 @@ extern "C" {
 #endif
 
 #if USE_CYNOS_LIST
-
-#endif
-
-#if USE_CYNOS_FSM
 
 #endif
 
