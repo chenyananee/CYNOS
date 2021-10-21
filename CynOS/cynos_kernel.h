@@ -23,7 +23,6 @@ extern "C" {
 
 typedef struct
 {
-	CynOS_U32 task_id;
 	struct
 	{
 		CynOS_U8 init_flag : 1;

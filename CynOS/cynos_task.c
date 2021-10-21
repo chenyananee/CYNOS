@@ -34,6 +34,10 @@ CynOS_VOID Cynos_TASK_Jump(CynOSTaskHandle * handle,CynOS_U32 next_step,CynOS_U3
 {
 	if(!handle) return;
 
+	if(handle->task_flag.init_flag)
+	{
+		Cynos_FsmSC_Jump(handle,next_step,wait_time);
+	}
 }
 
 CynOS_U8 Cynos_GetTask_Step(CynOSTaskHandle * handle)

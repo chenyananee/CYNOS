@@ -17,8 +17,6 @@ Copyright © 2020 ChenYanan.
 #include "cynos_fsm.h"
 
 
-
-/**/
 /**
  * @description: 
  * @param {CynOSFsm_Handle} *fsm
@@ -116,7 +114,7 @@ CynOS_VOID Cynos_Fsm_Goback(CynOSFsm_Handle *fsm)
 
 /**
  * 
-//=================fsm demo for use=============
+//=================fsm demo for use(not for switch/case fsm, it's so easy to use)=============
 
 int evt = 0;
 
