@@ -49,8 +49,8 @@ CynOS_TimeHandle *CynOSTime ## __N = (CynOS_TimeHandle *)__N ## TIM_MEM;
 #define CYNOS_TME(N) CynOSTime ## N
 
 extern void CynOS_Time_Init(void);
-extern CYNOS_STATUS CynOS_Time_Login(CynOS_U32 tick,CynOSPointFun cb,CynOS_U8 id);
-extern CYNOS_STATUS CynOS_Time_Logout(void(*time_hook)(CynOS_U32 time));
+extern CYNOS_STATUS CynOS_Time_Login(CynOS_U8 id,CynOS_U32 tick,CynOSPointFun cb);
+extern CYNOS_STATUS CynOS_Time_Logout(CynOS_U8 id);
 extern CYNOS_STATUS CynOS_Time_Stop(CynOS_U8 id);
 extern CYNOS_STATUS CynOS_Time_Start(CynOS_U8 id);
 extern void CynOS_Time_TickInterrupt(CynOS_U32 timebase);

@@ -73,7 +73,7 @@ CYNOS_STATUS CynOS_Time_Stop(CynOS_U8 id)
 /*
 	create the time by id
 */
-CYNOS_STATUS CynOS_Time_Login(CynOS_U32 tick,CynOSPointFun cb,CynOS_U8 id)
+CYNOS_STATUS CynOS_Time_Login(CynOS_U8 id,CynOS_U32 tick,CynOSPointFun cb)
 {
 	CynOS_U8 free_index=CynOS_U8_MAX,index=CynOS_U8_MAX;
 
