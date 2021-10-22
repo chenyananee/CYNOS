@@ -67,7 +67,7 @@ extern CynOS_VOID CynOS_KernelObj_Tick(CynOS_ObjHandle *obj,CynOS_U32 tick);
 */
 extern CYNOS_STATUS CynOS_Kernel_Task_Create(CynOS_ObjHandle *obj,
 									  CynOSVoidFun init_fun,
-									  CynOSVoidFun entry,
+									  CynOSPointFun entry,
 									  CynOS_U32 tick);
 /*
 	set the kernel obj's status like: run , stop or reset

@@ -34,7 +34,7 @@ void timer_interrupt()
 	 CynOS_KernelObj_Tick(CYNOS_KEROBJ(ui),1);
 }
 
-void bsp_init(void)
+void user_bsp_init(void)
 {
 	//TODO do some bsp init,such like clk_init,gpio_init,or uart_init...
 }
@@ -46,7 +46,7 @@ void bsp_init(void)
  */
 void user_task_init(void)
 {
-	
+	user_bsp_init();
 }
 /**
  * @description: 
@@ -63,9 +63,8 @@ void user_task(void *id)
  * @param {*}
  * @return {*}
  */
-int main(void)
+int appmain(void)
 {
-	bsp_init();
 	CynOS_KernelObj_Init(CYNOS_KEROBJ(ui),5,0);
     CynOS_Kernel_Task_Create(CYNOS_KEROBJ(ui),user_task_init,user_task,1000);
 	/*
@@ -74,6 +73,7 @@ int main(void)
 	CynOS_Kernel_Task_Create(CYNOS_KEROBJ(sensor),sensor_task_init,user_task,2000);
 	*/
 	CynOS_Start(CYNOS_KEROBJ(ui),KERNEL_RUN_FOREVER);
+	return 0;
 }
 
 

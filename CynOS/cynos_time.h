@@ -9,7 +9,7 @@ extern "C" {
 #include "cynos_cfg.h"
 #include "cynos_base.h"
 
-#define CYNOS_TIME_RUN 0X55
+#define CYNOS_TIME_RUN 2
 
 typedef struct
 {

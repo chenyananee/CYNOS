@@ -15,6 +15,7 @@ Copyright © 2020 ChenYanan.
 */
 
 #include "cynos_time.h"
+#if USE_CYNOS_TIME
 
 CREATE_TIME_OBJ(CYN_TIM,CYNOS_TIME_SIZE)
 
@@ -107,6 +108,8 @@ CYNOS_STATUS CynOS_Time_Login(CynOS_U8 id,CynOS_U32 tick,CynOSPointFun cb)
 		}
 		return CYNOS_ERR;
 	}
+
+	return CYNOS_ERR;
 }
 /*
 	DELETE the time by id
@@ -159,7 +162,7 @@ void CynOS_Time_TickInterrupt(CynOS_U32 timebase)
 
 
 
-
+#endif
 
 
 

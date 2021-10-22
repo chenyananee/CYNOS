@@ -16,6 +16,8 @@ Copyright ? 2020 ChenYanan.
 #include "cynos_cfg.h"
 #include "cynos_fifo.h"
 
+#if USE_CYNOS_FIFO
+
 /*fifoµ×²ã²Ù×÷*/
 CYNOS_STATUS pop(CynOS_U8 *fifo,CynOS_U8 *data,fifo_arg *arg,CynOS_U16 size)
 {	
@@ -107,6 +109,6 @@ void CynOS_FIFO_Init(CynOS_FIFO * fifo)
 
 
 
-
+#endif
 
 

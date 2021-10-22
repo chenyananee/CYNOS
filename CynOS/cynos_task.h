@@ -26,8 +26,7 @@ typedef struct
 	CynOS_U32  task_time_cnt;
 	CynOS_U32  task_frq;
 }CynOSTaskHandle;
-
-extern CYNOS_STATUS CynOS_TaskHandleInit(CynOSTaskHandle *taskhandle,CynOSVoidFun init_fun,CynOSVoidFun entry,CynOS_U32 tick);
+extern CYNOS_STATUS CynOS_TaskHandleInit(CynOSTaskHandle *taskhandle,CynOSVoidFun init_fun,CynOSPointFun entry,CynOS_U32 tick);
 extern CynOS_VOID Cynos_TASK_SystickHandle(CynOSTaskHandle * handle,CynOS_U32 tick);
 extern CynOS_VOID Cynos_TASK_Delay(CynOSTaskHandle * handle);
 extern CynOS_U8 Cynos_GetTask_Step(CynOSTaskHandle * handle);

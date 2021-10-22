@@ -19,6 +19,7 @@ Copyright © 2020 ChenYanan.
 #include "cynos_debug.h"
 #include "cynos_funlib.h"
 
+#if USE_CYNOS_DEBUG
 
 CynOS_Debug_Cfg gdebug_cfg;
 
@@ -136,6 +137,9 @@ void CynOS_Print_Hex(unsigned char * data,unsigned int len)
 		gdebug_cfg.write((char*)&debugbuff[0], debuge_len);
 	}
 }
+
+
+#endif
 
 
 

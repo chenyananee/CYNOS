@@ -55,7 +55,7 @@ if(iterator_index == CynOS_NULL)                    \
 plisthead = pnode;                                  \
 
 
-}
+
 
 #define CynOS_List_Remove(pnode) \
 

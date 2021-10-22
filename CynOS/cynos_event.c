@@ -14,8 +14,11 @@ Copyright © 2020 ChenYanan.
    limitations under the License.
 */
 #include "cynos_cfg.h"
+
+#if USE_CYNOS_EVENT
 #include "cynos_kernel.h"
 #include "cynos_event.h"
+#include "cynos_funlib.h"
 
 /**
  * @description: 
@@ -85,5 +88,5 @@ CYNOS_STATUS Cynos_EventReceive(CynosEventHandle *evtque_handle,CynOS_U16 quesiz
 	return CYNOS_ERR;
 }
 
-
+#endif
 

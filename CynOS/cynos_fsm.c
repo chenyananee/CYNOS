@@ -65,7 +65,7 @@ CynOS_U8 Cynos_FsmSC_GetStep(CynOS_VOID *scFsm)
 {
 	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
 
-	if(!fsm) return;
+	if(!fsm) return CYNOS_ERR_MEM;
 
 	return fsm->_task_current_flow;
 }
