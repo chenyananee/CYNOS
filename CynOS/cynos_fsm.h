@@ -19,7 +19,7 @@ typedef struct
 	CynOS_U8 _task_next_flow;
 	CynOS_U32 delay_cnt;
 	CynOS_U32 delay;
-}FSM_SC_Handle;
+}CynOSFSM_SC_Handle;
 
 /* fsm for switch/case end*/
 

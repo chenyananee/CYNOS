@@ -24,7 +24,7 @@ Copyright © 2020 ChenYanan.
  */
 CynOS_VOID Cynos_FsmSC_Jump(CynOS_VOID *scFsm,CynOS_U8 next_step,CynOS_U32 wait_time)
 {
-	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+	CynOSFSM_SC_Handle *fsm = (CynOSFSM_SC_Handle *)scFsm;
 
 	if(!fsm) return;
 
@@ -49,7 +49,7 @@ CynOS_VOID Cynos_FsmSC_Jump(CynOS_VOID *scFsm,CynOS_U8 next_step,CynOS_U32 wait_
  */
 CynOS_VOID Cynos_FsmSC_TimeHook(CynOS_VOID *scFsm,CynOS_U32 tick)
 {
-	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+	CynOSFSM_SC_Handle *fsm = (CynOSFSM_SC_Handle *)scFsm;
 
 	if(!fsm) return;
 
@@ -63,7 +63,7 @@ CynOS_VOID Cynos_FsmSC_TimeHook(CynOS_VOID *scFsm,CynOS_U32 tick)
  */
 CynOS_U8 Cynos_FsmSC_GetStep(CynOS_VOID *scFsm)
 {
-	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+	CynOSFSM_SC_Handle *fsm = (CynOSFSM_SC_Handle *)scFsm;
 
 	if(!fsm) return CYNOS_ERR_MEM;
 
@@ -76,7 +76,7 @@ CynOS_U8 Cynos_FsmSC_GetStep(CynOS_VOID *scFsm)
  */
 CynOS_VOID Cynos_FsmSC_Wait(CynOS_VOID *scFsm)
 {
-	FSM_SC_Handle *fsm = (FSM_SC_Handle *)scFsm;
+	CynOSFSM_SC_Handle *fsm = (CynOSFSM_SC_Handle *)scFsm;
 
 	if(!fsm) return;
 

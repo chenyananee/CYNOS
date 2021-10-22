@@ -22,11 +22,11 @@ extern "C" {
 
 /*=======================================================*/
 
-#define USE_CYNOS_DEBUG      1
+#define USE_CYNOS_DEBUG      0
 #define USE_CYNOS_EVENT      0
 #define USE_CYNOS_FIFO       0
 #define USE_CYNOS_LIST       0
-#define USE_CYNOS_TIME       1
+#define USE_CYNOS_TIME       0
 
 /*DEBUG CFG*/
 #if USE_CYNOS_DEBUG

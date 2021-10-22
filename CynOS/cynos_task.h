@@ -11,7 +11,7 @@ extern "C" {
 
 typedef struct
 {
-	FSM_SC_Handle fsm;     //must be 1st
+	CynOSFSM_SC_Handle fsm;     //must be 1st
 	struct
 	{
 		CynOS_U8 avl_flag : 1;
